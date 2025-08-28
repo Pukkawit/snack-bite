@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+The project includes a complete restaurant website with:
 
-First, run the development server:
+Hero section with stunning food imagery and smooth animations
+Dynamic menu system that fetches items from Supabase with category filtering
+Admin panel accessible at /admin (demo login: admin@snackbite.com / admin123)
+Shopping cart functionality with WhatsApp order integration
+Business hours and location with Google Maps embed placeholder
+Dark/light theme toggle for enhanced user experience
+Promotional banner system that rotates through active offers
+Floating WhatsApp button for customer support
+Fully responsive design optimized for all devices
+SEO optimization with proper meta tags and structured data
+The database schema includes tables for menu items, opening hours, restaurant info, and promotional banners, all with proper Row Level Security policies. The admin interface allows real-time menu management, and the cart system integrates seamlessly with WhatsApp for order placement.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+All components are built with modern animations using Framer Motion, and the design follows premium restaurant aesthetics with a warm, inviting color palette perfect for a food establishment.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Menu items from the database with real food images
+Opening hours displaying current status (Open/Closed)
+Restaurant information including contact details
+Promotional banners that rotate automatically
+Admin functionality for managing menu items
+The sample data includes delicious menu items like burgers, chicken wings, nachos, and drinks, all with professional food photography from Pexels. You can now:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Browse the menu with category filtering
+Add items to cart and simulate WhatsApp orders
+Access the admin panel at /admin using the demo credentials
+Manage menu items in real-time through the admin interface
+View business hours with live open/closed status
+The application is now fully functional with Supabase backend! Try adding items to your cart and testing the WhatsApp integration, or visit the admin panel to see how easy it is to manage the restaurant's menu.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

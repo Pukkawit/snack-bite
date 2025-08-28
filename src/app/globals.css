@@ -1,26 +1,503 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+/* Tailwind CSS v4 @theme inline configuration */
+@theme inline {
+  /* Dark mode configuration */
+  --default-mode: dark;
+  --dark-mode: "class";
+
+  --font-sans: "Saira", sans-serif; /* Map default sans font to Saira */
+  --font-PFBeauSansProThin: "PFBeauSansPro-Thin", sans-serif;
+  --font-logo: "AvenirLTStd-Black", sans-serif;
+  --font-logo-thin: "AvenirLTStd-Roman", sans-serif;
+  --font-siteLogo-thick: "MonktonBold Regular", sans-serif;
+  --font-siteLogo-thin: "Geometria-Light", sans-serif;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Border Radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xs: calc(var(--radius) - 6px);
+
+  /* z-index Scale */
+  --z-index-60: 60;
+  --z-index-70: 70;
+  --z-index-80: 80;
+  --z-index-90: 90;
+  --z-index-100: 100;
+
+  /* Animation tokens (generate animate-* classes) */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-spin: spin 1.5s linear infinite;
+  --animate-fade-in: fade-in 0.3s ease-in-out;
+  --animate-zoom-in: zoom-in 0.3s ease-in-out;
+  --animate-blink: blink 1s step-end infinite;
+  --animate-pulse-slow: pulse-slow 2s infinite alternate;
+  --animate-shine: shine 1.5s infinite linear;
+  --animate-gradient-shift: gradient-shift 10s ease infinite;
+  --animate-fade-in-up: fade-in-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    forwards;
+  --animate-slideIn: slideIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slideOut: slideOut 1s cubic-bezier(0.4, 0.6, 0.2, 1) forwards;
+  --animate-slide-in-from-left: slide-in-from-left 0.3s ease-in-out;
+  --animate-slide-in-from-right: slide-in-from-right 0.3s ease-in-out;
+  --animate-slide-in-bottom: slide-in-bottom 0.8s;
+  --animate-slide-in-top: slide-in-top 0.8s;
+  --animate-slide-down: slide-down 0.3s ease-out forwards;
+  --animate-slide-up: slide-up 0.3s ease-out forwards;
+
+  /* Map standard Tailwind color names to new custom variables */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-emphasis: hsl(var(--emphasis));
+  --color-emphasis-foreground: hsl(var(--emphasis-foreground));
+  --color-emphasis-hover: hsl(var(--emphasis-hover));
+  --color-emphasis-active: hsl(var(--emphasis-active));
+  --color-emphasis-disabled: hsl(var(--emphasis-disabled));
+  --color-emphasis-disabled-foreground: hsl(
+    var(--emphasis-disabled-foreground)
+  );
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-active: hsl(var(--primary-active));
+  --color-primary-disabled: hsl(var(--primary-disabled));
+  --color-primary-disabled-foreground: hsl(var(--primary-disabled-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-hover: hsl(var(--secondary-hover));
+  --color-secondary-active: hsl(var(--secondary-active));
+  --color-secondary-disabled: hsl(var(--secondary-disabled));
+  --color-secondary-disabled-foreground: hsl(
+    var(--secondary-disabled-foreground)
+  );
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-hover: hsl(var(--muted-hover));
+  --color-muted-active: hsl(var(--muted-active));
+  --color-muted-disabled: hsl(var(--muted-disabled));
+  --color-muted-disabled-foreground: hsl(var(--muted-disabled-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-hover: hsl(var(--accent-hover));
+  --color-accent-active: hsl(var(--accent-active));
+  --color-accent-disabled: hsl(var(--accent-disabled));
+  --color-accent-disabled-foreground: hsl(var(--accent-disabled-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-hover: hsl(var(--destructive-hover));
+  --color-destructive-active: hsl(var(--destructive-active));
+  --color-destructive-disabled: hsl(var(--destructive-disabled));
+  --color-destructive-disabled-foreground: hsl(
+    var(--destructive-disabled-foreground)
+  );
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-success-hover: hsl(var(--success-hover));
+  --color-success-active: hsl(var(--success-active));
+  --color-success-disabled: hsl(var(--success-disabled));
+  --color-success-disabled-foreground: hsl(var(--success-disabled-foreground));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-warning-hover: hsl(var(--warning-hover));
+  --color-warning-active: hsl(var(--warning-active));
+  --color-warning-disabled: hsl(var(--warning-disabled));
+  --color-warning-disabled-foreground: hsl(var(--warning-disabled-foreground));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-info-hover: hsl(var(--info-hover));
+  --color-info-active: hsl(var(--info-active));
+  --color-info-disabled: hsl(var(--info-disabled));
+  --color-info-disabled-foreground: hsl(var(--info-disabled-foreground));
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-[hsl(var(--border))]; /* Use direct hsl for border */
+  }
+  :where(body) {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  }
+  :where(body) {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  }
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Custom scrollbar styling to match theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--card)); /* Use new card variable */
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--secondary));
+}
+
+/* Selection color */
+::selection {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--emphasis-foreground)); /* Use emphasis-foreground */
+}
+
+/* Focus ring styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  --tw-ring-color: hsl(var(--primary));
+}
+@layer components {
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom animations */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: var(--dropdown-max-height); /* Use CSS variable */
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    max-height: var(--dropdown-max-height);
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: var(--accordion-max-height); /* Use CSS variable */
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    max-height: var(--accordion-max-height);
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: var(--dropdown-max-height); /* Use CSS variable */
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    max-height: var(--dropdown-max-height);
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
