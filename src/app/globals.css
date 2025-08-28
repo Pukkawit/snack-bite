@@ -6,7 +6,7 @@
 /* Tailwind CSS v4 @theme inline configuration */
 @theme inline {
   /* Dark mode configuration */
-  --default-mode: dark;
+  --default-mode: light;
   --dark-mode: "class";
 
   --font-sans: "Saira", sans-serif; /* Map default sans font to Saira */
@@ -140,82 +140,213 @@
 }
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --foreground-rgb: 51, 33, 24;
+  --background-start-rgb: 254, 252, 249;
   --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 248, 242;
+    --background-start-rgb: 28, 18, 12;
+    --background-end-rgb: 20, 12, 8;
   }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    /* Light Mode - Warm & Inviting Restaurant Palette */
+    --background: 42 33% 97%; /* Warm cream white #fefcf9 */
+    --foreground: 24 35% 15%; /* Rich dark brown #332118 */
+    --card: 40 40% 98%; /* Soft warm white #fffef8 */
+    --card-foreground: 24 35% 15%; /* Rich dark brown #332118 */
+    --popover: 40 40% 98%; /* Soft warm white #fffef8 */
+    --popover-foreground: 24 35% 15%; /* Rich dark brown #332118 */
+
+    /* Primary - Warm Terracotta/Paprika */
+    --primary: 14 85% 58%; /* Warm terracotta #e85a2b */
+    --primary-foreground: 0 0% 100%; /* Pure white */
+    --primary-hover: 14 85% 52%; /* Darker terracotta */
+    --primary-active: 14 85% 46%; /* Even darker terracotta */
+    --primary-disabled: 14 30% 70%; /* Muted terracotta */
+    --primary-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Secondary - Warm Gold */
+    --secondary: 43 74% 66%; /* Golden yellow #daa520 */
+    --secondary-foreground: 24 35% 15%; /* Rich dark brown */
+    --secondary-hover: 43 74% 60%; /* Darker gold */
+    --secondary-active: 43 74% 54%; /* Even darker gold */
+    --secondary-disabled: 43 30% 80%; /* Muted gold */
+    --secondary-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Muted - Warm Beige */
+    --muted: 40 20% 92%; /* Warm light beige #f5f2ed */
+    --muted-foreground: 30 15% 45%; /* Medium brown #73675c */
+    --muted-hover: 40 20% 88%; /* Slightly darker beige */
+    --muted-active: 40 20% 84%; /* Even darker beige */
+    --muted-disabled: 40 10% 95%; /* Very light beige */
+    --muted-disabled-foreground: 0 0% 70%; /* Light gray */
+
+    /* Accent - Deep Forest Green */
+    --accent: 140 25% 35%; /* Forest green #4a6741 */
+    --accent-foreground: 0 0% 100%; /* Pure white */
+    --accent-hover: 140 25% 30%; /* Darker forest green */
+    --accent-active: 140 25% 25%; /* Even darker forest green */
+    --accent-disabled: 140 15% 70%; /* Muted green */
+    --accent-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Emphasis - Rich Burgundy */
+    --emphasis: 0 45% 35%; /* Deep burgundy #7d3c41 */
+    --emphasis-foreground: 0 0% 100%; /* Pure white */
+    --emphasis-hover: 0 45% 30%; /* Darker burgundy */
+    --emphasis-active: 0 45% 25%; /* Even darker burgundy */
+    --emphasis-disabled: 0 20% 70%; /* Muted burgundy */
+    --emphasis-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Success - Fresh Sage Green */
+    --success: 120 35% 50%; /* Sage green #52a352 */
+    --success-foreground: 0 0% 100%; /* Pure white */
+    --success-hover: 120 35% 45%; /* Darker sage */
+    --success-active: 120 35% 40%; /* Even darker sage */
+    --success-disabled: 120 20% 75%; /* Muted sage */
+    --success-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Warning - Warm Amber */
+    --warning: 45 90% 60%; /* Warm amber #f2b544 */
+    --warning-foreground: 24 35% 15%; /* Rich dark brown */
+    --warning-hover: 45 90% 55%; /* Darker amber */
+    --warning-active: 45 90% 50%; /* Even darker amber */
+    --warning-disabled: 45 40% 80%; /* Muted amber */
+    --warning-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Info - Warm Blue-Gray */
+    --info: 200 25% 55%; /* Blue-gray #7a9cb5 */
+    --info-foreground: 0 0% 100%; /* Pure white */
+    --info-hover: 200 25% 50%; /* Darker blue-gray */
+    --info-active: 200 25% 45%; /* Even darker blue-gray */
+    --info-disabled: 200 15% 75%; /* Muted blue-gray */
+    --info-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Destructive - Warm Red */
+    --destructive: 0 70% 55%; /* Warm red #dc4545 */
+    --destructive-foreground: 0 0% 100%; /* Pure white */
+    --destructive-hover: 0 70% 50%; /* Darker red */
+    --destructive-active: 0 70% 45%; /* Even darker red */
+    --destructive-disabled: 0 35% 75%; /* Muted red */
+    --destructive-disabled-foreground: 0 0% 60%; /* Gray text */
+
+    /* Borders and Inputs */
+    --border: 30 15% 85%; /* Warm light brown #ddd5cc */
+    --input: 40 20% 95%; /* Very light warm beige #faf8f4 */
+    --ring: 14 85% 58%; /* Match primary color */
+
+    /* Chart colors - Warm food-themed palette */
+    --chart-1: 14 85% 58%; /* Terracotta */
+    --chart-2: 43 74% 66%; /* Gold */
+    --chart-3: 140 25% 35%; /* Forest green */
+    --chart-4: 0 45% 35%; /* Burgundy */
+    --chart-5: 45 90% 60%; /* Amber */
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Dark Mode - Sophisticated Restaurant Palette */
+    --background: 24 30% 8%; /* Deep warm brown #1c120c */
+    --foreground: 40 35% 95%; /* Warm off-white #fff8f2 */
+    --card: 24 25% 12%; /* Slightly lighter brown #241810 */
+    --card-foreground: 40 35% 95%; /* Warm off-white */
+    --popover: 24 25% 12%; /* Slightly lighter brown */
+    --popover-foreground: 40 35% 95%; /* Warm off-white */
+
+    /* Primary - Bright Warm Orange */
+    --primary: 20 90% 65%; /* Bright warm orange #ff7b3d */
+    --primary-foreground: 24 30% 8%; /* Deep brown */
+    --primary-hover: 20 90% 70%; /* Brighter orange */
+    --primary-active: 20 90% 75%; /* Even brighter orange */
+    --primary-disabled: 20 30% 35%; /* Muted orange */
+    --primary-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Secondary - Rich Gold */
+    --secondary: 48 85% 70%; /* Rich gold #e6c547 */
+    --secondary-foreground: 24 30% 8%; /* Deep brown */
+    --secondary-hover: 48 85% 75%; /* Brighter gold */
+    --secondary-active: 48 85% 80%; /* Even brighter gold */
+    --secondary-disabled: 48 30% 40%; /* Muted gold */
+    --secondary-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Muted - Dark Brown */
+    --muted: 24 20% 20%; /* Dark brown #3d2f24 */
+    --muted-foreground: 40 25% 70%; /* Light brown #b5a394 */
+    --muted-hover: 24 20% 25%; /* Slightly lighter brown */
+    --muted-active: 24 20% 30%; /* Even lighter brown */
+    --muted-disabled: 24 10% 15%; /* Very dark brown */
+    --muted-disabled-foreground: 0 0% 40%; /* Dark gray */
+
+    /* Accent - Bright Sage Green */
+    --accent: 140 45% 60%; /* Bright sage green #63b360 */
+    --accent-foreground: 24 30% 8%; /* Deep brown */
+    --accent-hover: 140 45% 65%; /* Brighter sage */
+    --accent-active: 140 45% 70%; /* Even brighter sage */
+    --accent-disabled: 140 25% 35%; /* Muted sage */
+    --accent-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Emphasis - Rich Rose Gold */
+    --emphasis: 15 60% 65%; /* Rose gold #d17a5a */
+    --emphasis-foreground: 24 30% 8%; /* Deep brown */
+    --emphasis-hover: 15 60% 70%; /* Brighter rose gold */
+    --emphasis-active: 15 60% 75%; /* Even brighter rose gold */
+    --emphasis-disabled: 15 30% 40%; /* Muted rose gold */
+    --emphasis-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Success - Vibrant Green */
+    --success: 120 50% 60%; /* Vibrant green #4dcc4d */
+    --success-foreground: 24 30% 8%; /* Deep brown */
+    --success-hover: 120 50% 65%; /* Brighter green */
+    --success-active: 120 50% 70%; /* Even brighter green */
+    --success-disabled: 120 25% 35%; /* Muted green */
+    --success-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Warning - Bright Amber */
+    --warning: 45 95% 70%; /* Bright amber #ffcb47 */
+    --warning-foreground: 24 30% 8%; /* Deep brown */
+    --warning-hover: 45 95% 75%; /* Brighter amber */
+    --warning-active: 45 95% 80%; /* Even brighter amber */
+    --warning-disabled: 45 40% 40%; /* Muted amber */
+    --warning-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Info - Cool Blue */
+    --info: 200 60% 65%; /* Cool blue #5ba3cc */
+    --info-foreground: 24 30% 8%; /* Deep brown */
+    --info-hover: 200 60% 70%; /* Brighter blue */
+    --info-active: 200 60% 75%; /* Even brighter blue */
+    --info-disabled: 200 30% 40%; /* Muted blue */
+    --info-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Destructive - Warm Coral Red */
+    --destructive: 5 80% 65%; /* Warm coral red #e85555 */
+    --destructive-foreground: 0 0% 100%; /* Pure white */
+    --destructive-hover: 5 80% 70%; /* Brighter coral */
+    --destructive-active: 5 80% 75%; /* Even brighter coral */
+    --destructive-disabled: 5 40% 40%; /* Muted coral */
+    --destructive-disabled-foreground: 0 0% 50%; /* Medium gray */
+
+    /* Borders and Inputs */
+    --border: 24 15% 25%; /* Medium brown #433128 */
+    --input: 24 20% 15%; /* Dark brown #2e2017 */
+    --ring: 20 90% 65%; /* Match primary color */
+
+    /* Chart colors - Vibrant dark mode palette */
+    --chart-1: 20 90% 65%; /* Bright orange */
+    --chart-2: 48 85% 70%; /* Rich gold */
+    --chart-3: 140 45% 60%; /* Bright sage */
+    --chart-4: 15 60% 65%; /* Rose gold */
+    --chart-5: 45 95% 70%; /* Bright amber */
   }
 }
 
 @layer base {
   * {
     @apply border-[hsl(var(--border))]; /* Use direct hsl for border */
-  }
-  :where(body) {
-    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
   }
   :where(body) {
     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
@@ -411,50 +542,6 @@
   to {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes slide-down {
-  from {
-    max-height: 0;
-    opacity: 0;
-  }
-  to {
-    max-height: var(--dropdown-max-height); /* Use CSS variable */
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    max-height: var(--dropdown-max-height);
-    opacity: 1;
-  }
-  to {
-    max-height: 0;
-    opacity: 0;
   }
 }
 

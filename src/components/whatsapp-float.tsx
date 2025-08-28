@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateWhatsAppURL } from "@/lib/whatsapp";
+import IconSets from "@/components/IconSets";
+import { X } from "lucide-react";
 
 export function WhatsAppFloat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,9 +55,9 @@ export function WhatsAppFloat() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full shadow-lg flex items-center justify-center text-white transition-colors duration-300"
+        className="w-14 h-14 bg-green-200 hover:bg-green-800 rounded-full shadow-lg flex items-center justify-center text-white transition-colors duration-300"
       >
-        <MessageCircle className="h-6 w-6" />
+        <IconSets name="whatsapp-logo" className="w-11 h-11" />
       </motion.button>
     </div>
   );

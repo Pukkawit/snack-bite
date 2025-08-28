@@ -76,7 +76,7 @@ export function PromoBanner() {
           }}
         >
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse-slow" />
             <motion.div
               className="absolute inset-0"
               style={{
@@ -94,7 +94,7 @@ export function PromoBanner() {
             />
           </div>
 
-          <div className="container mx-auto px-4 py-4 relative">
+          <div className="container mx-auto px-4 py-2 relative">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <motion.div

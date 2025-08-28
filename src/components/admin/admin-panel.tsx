@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface MenuItemForm {
   name: string;
@@ -46,6 +47,7 @@ export function AdminPanel() {
   const [formData, setFormData] = useState<MenuItemForm>(emptyForm);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     checkAuth();
@@ -68,7 +70,7 @@ export function AdminPanel() {
   const fetchMenuItems = async () => {
     try {
       const { data, error } = await supabase
-        .from("snack-bite_menu_items")
+        .from("snack_bite_menu_items")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -80,21 +82,21 @@ export function AdminPanel() {
     }
   };
 
-  const handleSignIn = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: "admin@snackbite.com",
-        password: "admin123",
-      });
+  /* const handleSignIn = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (error) throw error;
-      setIsAuthenticated(true);
-      toast.success("Signed in successfully");
-    } catch (error) {
-      console.error("Sign in error:", error);
-      toast.error("Sign in failed");
+    if (error) {
+      toast.error(error.message);
+      return;
     }
-  };
+
+    toast.success("Signed in successfully");
+    setIsAuthenticated(true);
+    fetchMenuItems();
+  }; */
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -118,7 +120,7 @@ export function AdminPanel() {
 
       if (editingItem) {
         const { error } = await supabase
-          .from("snack-bite_menu_items")
+          .from("snack_bite_menu_items")
           .update(menuItemData)
           .eq("id", editingItem.id);
 
@@ -126,7 +128,7 @@ export function AdminPanel() {
         toast.success("Menu item updated successfully");
       } else {
         const { error } = await supabase
-          .from("snack-bite_menu_items")
+          .from("snack_bite_menu_items")
           .insert([menuItemData]);
 
         if (error) throw error;
@@ -160,7 +162,7 @@ export function AdminPanel() {
 
     try {
       const { error } = await supabase
-        .from("snack-bite_menu_items")
+        .from("snack_bite_menu_items")
         .delete()
         .eq("id", id);
 
@@ -187,23 +189,8 @@ export function AdminPanel() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/50">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Admin Access</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground text-sm">
-              Demo credentials: admin@snackbite.com / admin123
-            </p>
-            <Button onClick={handleSignIn} className="w-full">
-              Sign In as Admin
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    router.push("/auth/login");
+    return null;
   }
 
   return (

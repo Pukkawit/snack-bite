@@ -86,7 +86,7 @@ export function HeroSection() {
                   .getElementById("about")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300"
+              className="border-2 border-muted bg-secondary-disabled text-accent hover:bg-secondary-active hover:text-accent-hover px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300"
             >
               Learn More
             </Button>
