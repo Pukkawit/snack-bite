@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   description:
     "Fresh ingredients, bold flavors, and unforgettable taste experiences. Order now from SnackBite and satisfy your cravings with our premium snacks and drinks.",
   keywords:
-    "restaurant, snacks, food delivery, burgers, drinks, fast food, fresh ingredients",
-  authors: [{ name: "SnackBite Team" }],
-  creator: "SnackBite",
+    "restaurant, snacks, food delivery, burgers, drinks, fast food, fresh ingredients, modern restaurants landing page",
+  authors: [{ name: "Witty Umosung" }],
+  creator: "Pukkawit",
   openGraph: {
     title: "SnackBite - Delicious Bites, Anytime",
     description:
