@@ -13,22 +13,27 @@ export function AdminPanel() {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    const checkAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+      setLoading(false);
 
-  const checkAuth = async () => {
-    setLoading(true);
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    setIsAuthenticated(!!session);
-    setLoading(false);
-  };
+      // ✅ Redirect here, not during render
+      if (!session) {
+        router.push("/auth/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     toast.success("Signed out successfully");
+    router.push("/auth/login"); // optional: kick out after sign out
   };
 
   if (loading) {
@@ -39,9 +44,9 @@ export function AdminPanel() {
     );
   }
 
+  // ✅ No redirect here anymore
   if (!isAuthenticated) {
-    router.push("/auth/login");
-    return null;
+    return null; // content is hidden while redirecting
   }
 
   return (
