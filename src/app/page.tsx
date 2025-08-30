@@ -10,8 +10,7 @@ import { WhatsAppFloat } from "@/components/whatsapp-float";
 import { PromoBannerDynamic } from "@/components/promo-banner-dynamic";
 
 export default function Home() {
-  /*   
-const foodPromos = [
+  /*   const foodPromos = [
     {
       title: "LUNCH SPECIAL",
       description: "Get 30% off all pasta dishes this week only!",
@@ -21,8 +20,9 @@ const foodPromos = [
       title: "FREE DELIVERY",
       description: "Free delivery on orders over ₦5,000 within 5km radius",
       buttonText: "Browse Menu",
-    }, */
-  ];
+    ];
+    }, 
+    */
   return (
     <main className="relative">
       <Header />
