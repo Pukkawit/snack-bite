@@ -454,6 +454,8 @@ export function RestaurantInfoForm() {
               label="Phone"
               {...register("phone")}
               placeholder="8000000000"
+              formatOptions={{ whatsapp: false, call: true }}
+              showFormatButtons={false}
             />
           </div>
           <div>
@@ -461,6 +463,8 @@ export function RestaurantInfoForm() {
               label="WhatsApp"
               {...register("whatsapp")}
               placeholder="8000000000"
+              formatOptions={{ whatsapp: true, call: false }}
+              showFormatButtons={false}
             />
           </div>
         </div>
