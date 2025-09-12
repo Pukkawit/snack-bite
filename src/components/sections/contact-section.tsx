@@ -3,64 +3,59 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, MapPin, Phone, Mail, Navigation } from "lucide-react";
-import {
-  supabase,
-  type OpeningHours,
-  type RestaurantInfo,
-} from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import { cn, fetchTenantIdBySlug } from "@/lib/utils";
+import { useOpeningHoursSection } from "@/hooks/db/useOpeningHoursSection";
 
-const daysOrder = [
+type RestaurantInfo = {
+  address?: string;
+  phone?: string;
+  email?: string;
+  google_maps_embed?: string;
+};
+
+const dayNames = [
+  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
-  "Sunday",
 ];
 
 export function ContactSection() {
-  const [openingHours, setOpeningHours] = useState<OpeningHours[]>([]);
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo | null>(
     null
   );
 
+  const params = useParams();
+  const tenantSlug = params?.tenantSlug as string;
+
+  const { data: openingHours = [], isLoading } =
+    useOpeningHoursSection(tenantSlug);
+
   useEffect(() => {
-    fetchOpeningHours();
+    const fetchRestaurantInfo = async () => {
+      const tenantId = await fetchTenantIdBySlug(tenantSlug);
+      const { data, error } = await supabase
+        .from("snack_bite_restaurant_info")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching restaurant info:", error);
+        return;
+      }
+
+      setRestaurantInfo(data);
+    };
+
     fetchRestaurantInfo();
-  }, []);
-
-  const fetchOpeningHours = async () => {
-    const { data, error } = await supabase
-      .from("snack_bite_opening_hours")
-      .select("*");
-
-    if (error) {
-      console.error("Error fetching opening hours:", error);
-      return;
-    }
-
-    const sortedHours = (data || []).sort(
-      (a, b) =>
-        daysOrder.indexOf(a.day_of_week) - daysOrder.indexOf(b.day_of_week)
-    );
-    setOpeningHours(sortedHours);
-  };
-
-  const fetchRestaurantInfo = async () => {
-    const { data, error } = await supabase
-      .from("snack_bite_restaurant_info")
-      .select("*")
-      .single();
-
-    if (error) {
-      console.error("Error fetching restaurant info:", error);
-      return;
-    }
-
-    setRestaurantInfo(data);
-  };
+  }, [tenantSlug]);
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":");
@@ -71,42 +66,138 @@ export function ContactSection() {
   };
 
   const getCurrentDayStatus = () => {
-    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
-    const todayHours = openingHours.find((h) => h.day_of_week === today);
+    const todayIdx = new Date().getDay(); // 0=Sunday
+    const todaySlots = openingHours.filter((h) => h.day_of_week === todayIdx);
 
-    if (!todayHours || todayHours.is_closed) {
+    if (todaySlots.length === 0) {
       return { status: "Closed", color: "text-red-500" };
     }
 
     const now = new Date();
-    const [openHour, openMinute] = todayHours.open_time.split(":").map(Number);
-    const [closeHour, closeMinute] = todayHours.close_time
-      .split(":")
-      .map(Number);
+    const isOpen = todaySlots.some((slot) => {
+      const [openHour, openMinute] = slot.open_time.split(":").map(Number);
+      const [closeHour, closeMinute] = slot.close_time.split(":").map(Number);
 
-    const openTime = new Date(now);
-    openTime.setHours(openHour, openMinute, 0, 0);
+      const openTime = new Date(now);
+      openTime.setHours(openHour, openMinute, 0, 0);
 
-    const closeTime = new Date(now);
-    closeTime.setHours(closeHour, closeMinute, 0, 0);
+      const closeTime = new Date(now);
+      closeTime.setHours(closeHour, closeMinute, 0, 0);
 
-    if (now >= openTime && now <= closeTime) {
+      return now >= openTime && now <= closeTime;
+    });
+
+    if (isOpen) {
       return { status: "Open Now", color: "text-green-500" };
-    } else if (now < openTime) {
+    }
+
+    // If not open now, find the next slot today
+    const futureSlot = todaySlots.find((slot) => {
+      const [openHour, openMinute] = slot.open_time.split(":").map(Number);
+      const openTime = new Date(now);
+      openTime.setHours(openHour, openMinute, 0, 0);
+      return now < openTime;
+    });
+
+    if (futureSlot) {
       return {
-        status: `Opens at ${formatTime(todayHours.open_time)}`,
+        status: `Opens at ${formatTime(futureSlot.open_time)}`,
         color: "text-orange-500",
       };
-    } else {
-      return { status: "Closed", color: "text-red-500" };
     }
+
+    return { status: "Closed", color: "text-red-500" };
   };
 
+  const groupedByDay = dayNames.map((day, idx) => {
+    const slots = openingHours.filter((h) => h.day_of_week === idx);
+    return { day, slots };
+  });
+
   const currentStatus = getCurrentDayStatus();
+
+  if (isLoading) {
+    return (
+      <div id="contact" className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Visit Us</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Come and taste our delicious offerings or order for pickup and
+              delivery
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <Card className="animate-pulse">
+              {/* Card Header Skeleton */}
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                  <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                </div>
+              </CardHeader>
+              {/* Card Content Skeleton */}
+              <CardContent className="space-y-3">
+                {Array.from({ length: 7 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center border-b border-b-muted-foreground/30 last:border-b-0 pb-1"
+                  >
+                    {/* Day Name Placeholder */}
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                    {/* Time Slots Placeholder */}
+                    <div className="flex flex-col items-end space-y-0.5">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            <Card className="animate-pulse">
+              {/* Card Header Skeleton */}
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                  <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                </div>
+              </CardHeader>
+              {/* Card Content Skeleton */}
+              <CardContent className="space-y-3">
+                {Array.from({ length: 7 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center border-b border-b-muted-foreground/30 last:border-b-0 pb-1"
+                  >
+                    {/* Day Name Placeholder */}
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                    {/* Time Slots Placeholder */}
+                    <div className="flex flex-col items-end space-y-0.5">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section id="contact" className="py-20 bg-muted/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -122,6 +213,7 @@ export function ContactSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Opening Hours & Contact */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -142,24 +234,89 @@ export function ContactSection() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {openingHours.map((hours) => (
-                  <div
-                    key={hours.id}
-                    className="flex justify-between items-center"
-                  >
-                    <span className="font-medium">{hours.day_of_week}</span>
-                    <span className="text-muted-foreground">
-                      {hours.is_closed
-                        ? "Closed"
-                        : `${formatTime(hours.open_time)} - ${formatTime(
-                            hours.close_time
-                          )}`}
-                    </span>
-                  </div>
-                ))}
+                {groupedByDay.map(({ day, slots }) => {
+                  const now = new Date();
+                  const today = now.toLocaleDateString("en-US", {
+                    weekday: "long",
+                  });
+                  const isToday = day === today;
+
+                  return (
+                    <div
+                      key={day}
+                      className="flex justify-between items-center border-b border-b-muted-foreground/30 last:border-b-0 pb-1"
+                    >
+                      {/* Highlight the day name only if it's today */}
+                      <span
+                        className={
+                          isToday ? "font-medium text-success" : "font-medium"
+                        }
+                      >
+                        {day}
+                      </span>
+
+                      <span className="flex flex-col items-end text-muted-foreground text-sm space-y-0.5">
+                        {slots.length === 0 ? (
+                          <span className="text-destructive">Closed</span>
+                        ) : (
+                          slots.map((s) => {
+                            const timeRange = `${formatTime(
+                              s.open_time
+                            )} - ${formatTime(s.close_time)}`;
+
+                            const parseTime = (timeStr: string) => {
+                              const [time, modifier] = timeStr.split(" "); // e.g. ["9:00", "AM"]
+                              const timeParts = time.split(":").map(Number);
+                              let hours = timeParts[0];
+                              const mins = timeParts[1];
+
+                              if (modifier === "PM" && hours !== 12)
+                                hours += 12;
+                              if (modifier === "AM" && hours === 12) hours = 0; // midnight case
+
+                              return new Date(
+                                now.getFullYear(),
+                                now.getMonth(),
+                                now.getDate(),
+                                hours,
+                                mins
+                              );
+                            };
+
+                            const [startStr, endStr] = timeRange.split(" - ");
+                            const start = parseTime(startStr);
+                            const end = parseTime(endStr);
+
+                            // highlight states
+                            const isActive =
+                              isToday && now >= start && now <= end;
+                            const isUpcoming = isToday && now < start;
+
+                            return (
+                              <div
+                                key={timeRange}
+                                className={cn(
+                                  "border-b border-b-muted-foreground/30 last:border-b-0 pb-1",
+                                  isUpcoming
+                                    ? "text-info font-medium"
+                                    : isActive
+                                    ? "text-success font-semibold"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {timeRange}
+                              </div>
+                            );
+                          })
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
 
+            {/* Contact Info */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -213,6 +370,7 @@ export function ContactSection() {
             </Card>
           </motion.div>
 
+          {/* Map */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}

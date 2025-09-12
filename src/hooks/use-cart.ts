@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { MenuItem } from "@/lib/supabase";
-
+import { useCallback, useState } from "react";
 export interface CartItem extends MenuItem {
   quantity: number;
 }
@@ -38,7 +36,7 @@ export function useCart() {
         prev.map((item) => (item.id === id ? { ...item, quantity } : item))
       );
     },
-    [removeItem]
+    [removeItem],
   );
 
   const clearCart = useCallback(() => {
@@ -47,7 +45,7 @@ export function useCart() {
 
   const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 

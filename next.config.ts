@@ -68,6 +68,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.levi.com",
       },
+      {
+        protocol: "https",
+        hostname: "apvuyqcvxtmncdivszts.supabase.co",
+      },
     ],
   },
 };

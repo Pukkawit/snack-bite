@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, ReactNode } from "react";
 import { useCart, CartItem } from "@/hooks/use-cart";
-import { MenuItem } from "@/lib/supabase";
 
 interface CartContextType {
   items: CartItem[];

@@ -1,5 +1,3 @@
-"use client";
-
 import { Header } from "@/components/layout/header";
 import { HeroSection } from "@/components/sections/hero-section";
 import { PromoBanner } from "@/components/sections/promo-banner";
@@ -10,19 +8,6 @@ import { WhatsAppFloat } from "@/components/whatsapp-float";
 import { PromoBannerDynamic } from "@/components/promo-banner-dynamic";
 
 export default function Home() {
-  /*   const foodPromos = [
-    {
-      title: "LUNCH SPECIAL",
-      description: "Get 30% off all pasta dishes this week only!",
-      buttonText: "Order Now",
-    },
-    {
-      title: "FREE DELIVERY",
-      description: "Free delivery on orders over ₦5,000 within 5km radius",
-      buttonText: "Browse Menu",
-    ];
-    }, 
-    */
   return (
     <main className="relative">
       <Header />
@@ -43,7 +28,7 @@ export default function Home() {
               metadata: {
                 message:
                   "Hi! I'm interested in the 1-Page Business Website package for ₦70k. Can we discuss the details?",
-                businessName: "Your Business",
+                businessName: "@Witty Umosung",
               },
             },
           },
@@ -80,7 +65,7 @@ export default function Home() {
         ]}
         decorativeIcons={["code", "palette", "zap", "monitor"]}
         floatingIcons={["activity", "guage", "figma", "webhook"]}
-        reappearInterval={45000}
+        reappearInterval={30000}
         rotationInterval={10000}
       />
       <MenuSection />

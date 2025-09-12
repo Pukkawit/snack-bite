@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight, Gift, Zap } from "lucide-react";
-import { supabase, type PromoBanner as PromoBannerType } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export function PromoBanner() {
-  const [banners, setBanners] = useState<PromoBannerType[]>([]);
+  const [banners, setBanners] = useState<PromoBanner[]>([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -46,10 +46,14 @@ export function PromoBanner() {
   const banner = banners[currentBanner];
 
   const getIconForBanner = (title: string) => {
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes("sale") || lowerTitle.includes("discount"))
+    const titleToLowerCase = title.toLowerCase();
+    if (
+      titleToLowerCase.includes("sale") ||
+      titleToLowerCase.includes("discount")
+    )
       return Gift;
-    if (lowerTitle.includes("new") || lowerTitle.includes("launch")) return Zap;
+    if (titleToLowerCase.includes("new") || titleToLowerCase.includes("launch"))
+      return Zap;
     return Sparkles;
   };
 

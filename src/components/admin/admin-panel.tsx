@@ -1,80 +1,75 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import toast from "react-hot-toast";
+import { LogOut } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useRestaurantName } from "@/hooks/db/getRestaurantName";
+import toast from "react-hot-toast";
+import { useProfile } from "@/hooks/db/getUserProfile";
+import { getInitials } from "@/lib/utils";
 
 export function AdminPanel() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-      setLoading(false);
+  const { profile, isLoading } = useProfile();
 
-      // ✅ Redirect here, not during render
-      if (!session) {
-        router.push("/auth/login");
-      }
-    };
-
-    checkAuth();
-  }, [router]);
+  const { data: restaurantName } = useRestaurantName(
+    profile?.userId ?? "SnackBite"
+  );
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setIsAuthenticated(false);
     toast.success("Signed out successfully");
-    router.push("/auth/login"); // optional: kick out after sign out
+    router.push("/auth/login");
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
+      <div className="bg-muted/50 py-4 shadow-sm mb-4">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
+            <h1 className="text-2xl font-bold">Loading…</h1>
+          </div>
+        </div>
       </div>
     );
   }
 
-  // ✅ No redirect here anymore
-  if (!isAuthenticated) {
-    return null; // content is hidden while redirecting
-  }
-
   return (
-    <div className="min-h-screen bg-muted/50 py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <Button onClick={handleSignOut} variant="outline">
-            Sign Out
+    <div className="bg-muted/50 py-4 shadow-sm mb-4">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="container flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {profile?.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={profile.full_name ?? "Avatar"}
+                width={48}
+                height={48}
+                className="rounded-full object-cover w-14 h-14 object-center"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-muted-foreground/50 text-2xl flex items-center justify-center font-semibold text-primary">
+                {getInitials(profile?.full_name)}
+              </div>
+            )}
+
+            <div>
+              <h1 className="text-2xl font-bold">{restaurantName}</h1>
+              <p className="text-sm text-muted-foreground">
+                {profile?.full_name ?? "Admin"}
+              </p>
+            </div>
+          </div>
+
+          <Button onClick={handleSignOut} variant="destructive" size="sm">
+            <span className="flex items-center gap-2">
+              <LogOut size={14} /> Sign Out
+            </span>
           </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle></CardTitle>
-            </CardHeader>
-            <CardContent></CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Menu Items</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 max-h-96 overflow-y-auto"></div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

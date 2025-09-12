@@ -10,11 +10,6 @@
   --dark-mode: "class";
 
   --font-sans: "Saira", sans-serif; /* Map default sans font to Saira */
-  --font-PFBeauSansProThin: "PFBeauSansPro-Thin", sans-serif;
-  --font-logo: "AvenirLTStd-Black", sans-serif;
-  --font-logo-thin: "AvenirLTStd-Roman", sans-serif;
-  --font-siteLogo-thick: "MonktonBold Regular", sans-serif;
-  --font-siteLogo-thin: "Geometria-Light", sans-serif;
 
   /* Font Weights */
   --font-weight-light: 300;
@@ -53,6 +48,7 @@
   --animate-slide-in-from-left: slide-in-from-left 0.3s ease-in-out;
   --animate-slide-in-from-right: slide-in-from-right 0.3s ease-in-out;
   --animate-slide-in-bottom: slide-in-bottom 0.8s;
+  --animate-slide-out-bottom: slide-in-bottom 0.9s;
   --animate-slide-in-top: slide-in-top 0.8s;
   --animate-slide-down: slide-down 0.3s ease-out forwards;
   --animate-slide-up: slide-up 0.3s ease-out forwards;
@@ -137,6 +133,34 @@
   --color-info-active: hsl(var(--info-active));
   --color-info-disabled: hsl(var(--info-disabled));
   --color-info-disabled-foreground: hsl(var(--info-disabled-foreground));
+}
+
+@font-face {
+  font-family: "Saira";
+  src: url("/fonts/Saira-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Saira";
+  src: url("/fonts/Saira-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Saira";
+  src: url("/fonts/Saira-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Saira";
+  src: url("/fonts/Saira-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
 }
 
 :root {
@@ -237,7 +261,7 @@
 
     /* Borders and Inputs */
     --border: 30 15% 85%; /* Warm light brown #ddd5cc */
-    --input: 40 20% 95%; /* Very light warm beige #faf8f4 */
+    --input: 40 20% 80%;
     --ring: 14 85% 58%; /* Match primary color */
 
     /* Chart colors - Warm food-themed palette */
@@ -274,7 +298,7 @@
 
     /* Secondary - Rich Gold */
     --secondary: 48 85% 70%; /* Rich gold #e6c547 */
-    --secondary-foreground: 24 30% 8%; /* Deep brown */
+    --secondary-foreground: 24 30% 50%;
     --secondary-hover: 48 85% 75%; /* Brighter gold */
     --secondary-active: 48 85% 80%; /* Even brighter gold */
     --secondary-disabled: 48 30% 40%; /* Muted gold */
@@ -587,6 +611,21 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slide-out-bottom {
+  0% {
+    opacity: 1;
+    transform: translate(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100px);
   }
 }
 

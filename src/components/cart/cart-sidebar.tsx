@@ -4,7 +4,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCartContext } from "@/components/providers/cart-provider";
+import { useCartContext } from "@/providers/cart-provider";
 import { generateWhatsAppURL, createOrderMessage } from "@/lib/whatsapp";
 import Image from "next/image";
 

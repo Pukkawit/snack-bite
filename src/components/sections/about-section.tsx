@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Award, Users, Clock, Heart } from "lucide-react";
-import { supabase, type RestaurantInfo } from "@/lib/supabase";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useRestaurantInfo } from "@/hooks/db/useRestaurantInfo";
 
 const features = [
   {
@@ -32,27 +33,16 @@ const features = [
 ];
 
 export function AboutSection() {
-  const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo | null>(
-    null
-  );
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string | undefined;
 
-  useEffect(() => {
-    fetchRestaurantInfo();
-  }, []);
+  const { data: restaurantInfo } = useRestaurantInfo(tenantSlug);
 
-  const fetchRestaurantInfo = async () => {
-    const { data, error } = await supabase
-      .from("snack_bite_restaurant_info")
-      .select("*")
-      .single();
-
-    if (error) {
-      console.error("Error fetching restaurant info:", error);
-      return;
-    }
-
-    setRestaurantInfo(data);
-  };
+  const aboutSectionImages =
+    restaurantInfo?.about_section?.imageUrls &&
+    restaurantInfo?.about_section.imageUrls.length > 0
+      ? restaurantInfo.about_section.imageUrls
+      : [];
 
   return (
     <section id="about" className="py-20 bg-muted/50">
@@ -64,9 +54,11 @@ export function AboutSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Story</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            {restaurantInfo?.about_section.title || "Our Story"}
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {restaurantInfo?.description ||
+            {restaurantInfo?.about_section?.description ||
               "We serve the most delicious snacks and refreshing drinks in town. Made fresh daily with the finest ingredients, our menu offers something special for every craving."}
           </p>
         </motion.div>
@@ -79,28 +71,47 @@ export function AboutSection() {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <h3 className="text-3xl font-bold">Passionate About Food</h3>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              At SnackBite, we believe that great food brings people together.
-              Since our founding, we&apos;ve been committed to serving
-              delicious, high-quality snacks that satisfy your cravings and
-              create memorable experiences.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Our chefs work tirelessly to perfect each recipe, ensuring that
-              every bite delivers the perfect balance of flavors. From our
-              signature burgers to our refreshing drinks, everything is made to
-              order with love and attention to detail.
-            </p>
-            <div className="flex flex-wrap gap-4">
+            <h3 className="text-3xl font-bold md:text-left text-center">
+              {restaurantInfo?.about_section.subtitle ||
+                "Passionate About Food"}
+            </h3>
+            {restaurantInfo?.about_section ? (
+              restaurantInfo?.about_section.paragraphs.map(
+                (paragraph: string, index: number) => (
+                  <p
+                    key={index}
+                    className="text-lg text-muted-foreground leading-relaxed text-center md:text-left"
+                  >
+                    {paragraph}
+                  </p>
+                )
+              )
+            ) : (
+              <>
+                <p className="text-lg text-muted-foreground leading-relaxed text-center md:text-left">
+                  At SnackBite, we believe that great food brings people
+                  together. Since our founding, we&apos;ve been committed to
+                  serving delicious, high-quality snacks that satisfy your
+                  cravings and create memorable experiences.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed text-center md:text-left">
+                  Our chefs work tirelessly to perfect each recipe, ensuring
+                  that every bite delivers the perfect balance of flavors. From
+                  our signature burgers to our refreshing drinks, everything is
+                  made to order with love and attention to detail.
+                </p>
+              </>
+            )}
+            <div className="flex flex-wrap gap-4 items-center justify-center md:justify-start">
               <div className="bg-orange-100 dark:bg-orange-900/20 px-4 py-2 rounded-full">
                 <span className="text-orange-600 dark:text-orange-400 font-semibold">
-                  Est. 2020
+                  Est. {restaurantInfo?.about_section.established || "2020"}
                 </span>
               </div>
               <div className="bg-green-100 dark:bg-green-900/20 px-4 py-2 rounded-full">
                 <span className="text-green-600 dark:text-green-400 font-semibold">
-                  1000+ Happy Customers
+                  {restaurantInfo?.about_section.happy_customers || "1000"}+
+                  Happy Customers
                 </span>
               </div>
             </div>
@@ -115,29 +126,41 @@ export function AboutSection() {
           >
             <div className="grid grid-cols-2 gap-4">
               <Image
-                src="https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg"
-                alt="Delicious burger"
+                src={
+                  aboutSectionImages[0]?.url ||
+                  "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg"
+                }
+                alt={aboutSectionImages[0]?.name || "Delicious burger"}
                 className="rounded-lg shadow-lg aspect-square object-cover"
                 width={200}
                 height={200}
               />
               <Image
-                src="https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg"
-                alt="Crispy chicken wings"
+                src={
+                  aboutSectionImages[1]?.url ||
+                  "https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg"
+                }
+                alt={aboutSectionImages[1]?.name || "Crispy chicken wings"}
                 className="rounded-lg shadow-lg aspect-square object-cover mt-8"
                 width={200}
                 height={200}
               />
               <Image
-                src="https://images.pexels.com/photos/7613568/pexels-photo-7613568.jpeg"
-                alt="Loaded nachos"
+                src={
+                  aboutSectionImages[2]?.url ||
+                  "https://images.pexels.com/photos/7613568/pexels-photo-7613568.jpeg"
+                }
+                alt={aboutSectionImages[2]?.name || "Loaded nachos"}
                 className="rounded-lg shadow-lg aspect-square object-cover -mt-8"
                 width={200}
                 height={200}
               />
               <Image
-                src="https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg"
-                alt="Cheesecake slice"
+                src={
+                  aboutSectionImages[3]?.url ||
+                  "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg"
+                }
+                alt={aboutSectionImages[3]?.name || "Cheesecake slice"}
                 className="rounded-lg shadow-lg aspect-square object-cover"
                 width={200}
                 height={200}

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit, Trash2, Save, X } from "lucide-react";
-import { supabase, type MenuItem } from "@/lib/supabase";
+import { Plus, Edit, Trash2, Save, X, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -19,9 +19,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { Separator } from "../ui/separator";
+import Link from "next/link";
+import ImageUploadField from "../ImageUploadField";
+import { useMenuItems } from "@/hooks/db/useMenuItems"; // ✅ using our React Query hook
+import type { MenuItem } from "@/types/menu";
 
-interface MenuItemForm {
+export interface MenuItemFormData {
   name: string;
   description: string;
   price: string;
@@ -31,7 +35,7 @@ interface MenuItemForm {
   is_featured: boolean;
 }
 
-const emptyForm: MenuItemForm = {
+const emptyForm: MenuItemFormData = {
   name: "",
   description: "",
   price: "",
@@ -42,47 +46,25 @@ const emptyForm: MenuItemForm = {
 };
 
 export function MenuItemForm() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
-  const [formData, setFormData] = useState<MenuItemForm>(emptyForm);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [formData, setFormData] = useState<MenuItemFormData>(emptyForm);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  const params = useParams();
+  const tenantSlug = params?.tenantSlug as string;
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchMenuItems();
-    }
-  }, [isAuthenticated]);
+  const {
+    data: menuItems = [],
+    isLoading,
+    addMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+    isAdding,
+    isUpdating,
+  } = useMenuItems();
 
-  const checkAuth = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    setIsAuthenticated(!!session);
-    setLoading(false);
-  };
+  if (isLoading) return <p>Loading...</p>;
 
-  const fetchMenuItems = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("snack_bite_menu_items")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setMenuItems(data || []);
-    } catch (error) {
-      console.error("Error fetching menu items:", error);
-      toast.error("Failed to load menu items");
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.name || !formData.price || !formData.category) {
@@ -90,35 +72,27 @@ export function MenuItemForm() {
       return;
     }
 
-    try {
-      const menuItemData = {
-        ...formData,
-        price: parseFloat(formData.price),
-      };
+    const menuItemData = {
+      ...formData,
+      price: parseFloat(formData.price),
+    };
 
-      if (editingItem) {
-        const { error } = await supabase
-          .from("snack_bite_menu_items")
-          .update(menuItemData)
-          .eq("id", editingItem.id);
-
-        if (error) throw error;
-        toast.success("Menu item updated successfully");
-      } else {
-        const { error } = await supabase
-          .from("snack_bite_menu_items")
-          .insert([menuItemData]);
-
-        if (error) throw error;
-        toast.success("Menu item created successfully");
-      }
-
-      setFormData(emptyForm);
-      setEditingItem(null);
-      fetchMenuItems();
-    } catch (error) {
-      console.error("Error saving menu item:", error);
-      toast.error("Failed to save menu item");
+    if (editingItem) {
+      updateMenuItem.mutate(
+        { ...menuItemData, id: editingItem.id },
+        {
+          onSuccess: () => {
+            setFormData(emptyForm);
+            setEditingItem(null);
+          },
+        }
+      );
+    } else {
+      addMenuItem.mutate(menuItemData, {
+        onSuccess: () => {
+          setFormData(emptyForm);
+        },
+      });
     }
   };
 
@@ -135,22 +109,16 @@ export function MenuItemForm() {
     });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm("Are you sure you want to delete this item?")) return;
-
-    try {
-      const { error } = await supabase
-        .from("snack_bite_menu_items")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-      toast.success("Menu item deleted successfully");
-      fetchMenuItems();
-    } catch (error) {
-      console.error("Error deleting menu item:", error);
-      toast.error("Failed to delete menu item");
-    }
+    deleteMenuItem.mutate(id, {
+      onSuccess: () => {
+        if (editingItem?.id === id) {
+          setEditingItem(null);
+          setFormData(emptyForm);
+        }
+      },
+    });
   };
 
   const cancelEdit = () => {
@@ -158,29 +126,25 @@ export function MenuItemForm() {
     setFormData(emptyForm);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    router.push("/auth/login");
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-muted/50 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <Link
+          href={`/admin/${tenantSlug}`}
+          className="flex gap-2 items-center justify-center border-border px-4 py-2 bg-accent-disabled hover:bg-accent transition-colors duration-300 rounded-sm my-4 max-w-max"
+        >
+          <ArrowLeft size={14} />
+          <p className="text-sm">Go Back</p>
+        </Link>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 🔹 Form */}
           <Card>
             <CardHeader>
               <CardTitle>
                 {editingItem ? "Edit Menu Item" : "Add New Menu Item"}
               </CardTitle>
             </CardHeader>
+            <Separator className="mb-6" />
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
@@ -226,46 +190,99 @@ export function MenuItemForm() {
                     <SelectItem value="drinks">Drinks</SelectItem>
                     <SelectItem value="specials">Specials</SelectItem>
                     <SelectItem value="desserts">Desserts</SelectItem>
+                    <SelectItem value="efik-ibibio">Efit-Ibibio</SelectItem>
                   </SelectContent>
                 </Select>
 
-                <Input
-                  placeholder="Image URL"
-                  value={formData.image_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image_url: e.target.value })
-                  }
-                />
-
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Available</label>
-                  <Switch
-                    checked={formData.is_available}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_available: checked })
-                    }
+                <div className="flex bg-muted/50 p-4 border-muted/80 border rounded-sm">
+                  <ImageUploadField
+                    label="Item Image"
+                    id="image_url"
+                    value={formData.image_url} // 🔹 controlled value
+                    imageUploadButtonText1="Upload Image"
+                    imageUploadButtonText2="Change Image"
+                    cloudinaryOptions={{
+                      cloudName:
+                        process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "",
+                      uploadPreset:
+                        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
+                      folderName: `items-image/${tenantSlug}`,
+                    }}
+                    imageDimensions={{
+                      maxWidth: 5000,
+                      maxHeight: 5000,
+                      minWidth: 100,
+                      minHeight: 100,
+                    }}
+                    onChange={(e) => {
+                      const url = e?.target?.value;
+                      setFormData({ ...formData, image_url: url }); // ✅ save the real URL
+                    }}
                   />
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Featured</label>
-                  <Switch
-                    checked={formData.is_featured}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_featured: checked })
-                    }
-                  />
+                <div className="flex flex-col bg-muted/50 p-4 border-muted/80 border space-y-4 rounded-sm">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Available</label>
+                    <Switch
+                      checked={formData.is_available}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_available: checked })
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Featured</label>
+                    <Switch
+                      checked={formData.is_featured}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_featured: checked })
+                      }
+                    />
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">
+                <Separator className="my-8" />
+
+                <div className="flex gap-2 ">
+                  <Button
+                    type="submit"
+                    className="flex-1"
+                    disabled={editingItem ? isUpdating : isAdding}
+                  >
                     {editingItem ? (
-                      <Save className="h-4 w-4 mr-2" />
+                      <span className="flex gap-2 items-center">
+                        {isUpdating ? (
+                          <>
+                            {" "}
+                            <Loader2 className="h-4 w-4 animate-spin" />{" "}
+                            Updating...{" "}
+                          </>
+                        ) : (
+                          <>
+                            {" "}
+                            <Save className="h-4 w-4" /> Update{" "}
+                          </>
+                        )}
+                      </span>
                     ) : (
-                      <Plus className="h-4 w-4 mr-2" />
+                      <span className="flex gap-2 items-center">
+                        {isAdding ? (
+                          <>
+                            {" "}
+                            <Loader2 className="h-4 w-4 animate-spin" />{" "}
+                            Creating...{" "}
+                          </>
+                        ) : (
+                          <>
+                            {" "}
+                            <Plus className="h-4 w-4" /> Create{" "}
+                          </>
+                        )}
+                      </span>
                     )}
-                    {editingItem ? "Update" : "Create"}
                   </Button>
+
                   {editingItem && (
                     <Button
                       type="button"
@@ -281,12 +298,15 @@ export function MenuItemForm() {
             </CardContent>
           </Card>
 
+          {/* 🔹 Items list */}
           <Card>
             <CardHeader>
-              <CardTitle>Menu Items</CardTitle>
+              <CardTitle>Added Menu Items</CardTitle>
+              <span>You have {menuItems.length} items in store</span>
             </CardHeader>
+            <Separator className="mb-6" />
             <CardContent>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+              <div className="space-y-4 h-full md:max-h-full max-h-96 overflow-y-auto">
                 {menuItems.map((item) => (
                   <motion.div
                     key={item.id}

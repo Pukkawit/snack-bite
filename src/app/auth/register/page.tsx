@@ -1,98 +1,56 @@
-"use client";
+import type { Metadata } from "next";
+import Register from "@/components/auth/register";
 
-import { useForm } from "react-hook-form";
-import { supabase } from "@/lib/supabase";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import toast from "react-hot-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Loader2, Signature } from "lucide-react";
+export const metadata: Metadata = {
+  title: "SnackBite - Register Page",
+  description: "Secure register page with ",
+  keywords:
+    "restaurant, snacks, food delivery, burgers, drinks, fast food, fresh ingredients, modern restaurants landing page",
+  authors: [{ name: "Witty Umosung" }],
+  creator: "Pukkawit",
+  openGraph: {
+    title: "SnackBite - Delicious Bites, Anytime",
+    description:
+      "Fresh ingredients, bold flavors, and unforgettable taste experiences. Order now and satisfy your cravings!",
+    url: "https://snackbite.com",
+    siteName: "SnackBite",
+    images: [
+      {
+        url: "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "SnackBite - Delicious Food",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SnackBite - Delicious Bites, Anytime",
+    description:
+      "Fresh ingredients, bold flavors, and unforgettable taste experiences.",
+    images: [
+      "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg",
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const { register, handleSubmit, reset } = useForm<{
-    email: string;
-    password: string;
-    full_name: string;
-  }>();
-
-  const onSubmit = async (data: {
-    email: string;
-    password: string;
-    full_name: string;
-  }) => {
-    setIsLoading(true);
-    const { data: authData, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (error) {
-      toast.error(error.message);
-      setIsLoading(false);
-      return;
-    }
-    // Insert into profile
-    if (authData.user) {
-      await supabase.from("snack_bite_profile").insert({
-        id: authData.user.id,
-        full_name: data.full_name,
-        role: "admin",
-      });
-    }
-
-    toast.success("Registered successfully!");
-    router.push("/auth/login");
-    reset();
-    setIsLoading(false);
-  };
-
+export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center">Welcome 🥰!</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-muted-foreground text-center">
-            Please signup to access the admin panel and manage your restaurant.
-          </p>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mx-auto my-8 space-y-6  border border-border p-4 w-full rounded-md"
-          >
-            <Input
-              placeholder="Full Name"
-              {...register("full_name", { required: true })}
-            />
-            <Input
-              placeholder="Email"
-              type="email"
-              {...register("email", { required: true })}
-            />
-            <Input
-              placeholder="Password"
-              type="password"
-              {...register("password", { required: true })}
-            />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <span className="flex gap-2 items-center">
-                  <Loader2 className="animate-spin" size={14} /> Registering...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <Signature size={14} /> Register
-                </span>
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen py-16 flex items-center justify-center flex-col">
+      <Register />
     </div>
   );
 }

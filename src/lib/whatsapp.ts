@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { supabase } from "./supabase/client";
 
 export const fetchWhatappPhone = async (): Promise<string | null> => {
   const { data, error } = await supabase

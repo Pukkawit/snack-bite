@@ -377,6 +377,13 @@ export function PromoBannerDynamic({
   );
 }
 
+/* 
+
+https://api.whatsapp.com/send/?phone=2348136289052&text=Hi+Pukkawit%21+I+found+your+portfolio+and+would+like+to+discuss+a+project.&type=phone_number&app_absent=0
+
+
+*/
+
 /*
 === USAGE EXAMPLES ===
 

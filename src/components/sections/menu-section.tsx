@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Star } from "lucide-react";
-import { supabase, type MenuItem } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { useCartContext } from "@/components/providers/cart-provider";
+import { useCartContext } from "@/providers/cart-provider";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useMenuSectionItems } from "@/hooks/db/useMenuSectionItems";
 
 const categories = [
   { id: "all", name: "All Items" },
@@ -17,38 +18,19 @@ const categories = [
   { id: "drinks", name: "Drinks" },
   { id: "specials", name: "Specials" },
   { id: "desserts", name: "Desserts" },
+  { id: "efik-ibibio", name: "Efik-Ibibio" },
 ];
 
 export function MenuSection() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
-  const [loading, setLoading] = useState(true);
   const { addItem } = useCartContext();
 
-  useEffect(() => {
-    fetchMenuItems();
-  }, []);
+  const params = useParams();
+  const tenantSlug = params?.tenantSlug as string;
 
-  const fetchMenuItems = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("snack_bite_menu_items")
-        .select("*")
-        .eq("is_available", true)
-        .order("created_at", { ascending: false });
+  const { data: menuItems = [], isLoading } = useMenuSectionItems(tenantSlug);
 
-      if (error) throw error;
-
-      setMenuItems(data || []);
-      setFeaturedItems(data?.filter((item) => item.is_featured) || []);
-    } catch (error) {
-      console.error("Error fetching menu items:", error);
-      toast.error("Failed to load menu items");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const featuredItems = menuItems.filter((item) => item.is_featured);
 
   const filteredItems =
     activeCategory === "all"
@@ -60,7 +42,7 @@ export function MenuSection() {
     toast.success(`${item.name} added to cart!`);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section id="menu" className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,7 +91,7 @@ export function MenuSection() {
               <Star className="h-6 w-6 text-yellow-500 fill-current" />
               Featured Items
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {featuredItems.map((item, index) => (
                 <motion.div
                   key={item.id}
@@ -148,7 +130,7 @@ export function MenuSection() {
           ))}
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredItems.map((item, index) => (
             <motion.div
               key={item.id}
