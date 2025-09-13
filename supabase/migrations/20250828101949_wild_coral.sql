@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS snack-bite_promo_banners (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   title text NOT NULL,
   description text,
-  is_active boolean DEFAULT true,
+  active boolean DEFAULT true,
   background_color text DEFAULT '#ff6b35',
   text_color text DEFAULT '#ffffff',
   created_at timestamptz DEFAULT now(),
