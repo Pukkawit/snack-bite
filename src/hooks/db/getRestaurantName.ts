@@ -5,19 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 
 async function getRestaurantName(userId: string) {
   // fetch profile → tenant_id
-  /*  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("snack_bite_profile")
     .select("tenant_id")
     .eq("id", userId)
     .single();
 
-  if (profileError) throw profileError; */
+  if (profileError) throw profileError;
 
   // fetch tenant → restaurant_name
   const { data: tenant, error: tenantError } = await supabase
     .from("snack_bite_tenants")
     .select("restaurant_name")
-    .eq("id", userId)
+    .eq("id", profile.tenant_id)
     .single();
 
   if (tenantError) throw tenantError;
