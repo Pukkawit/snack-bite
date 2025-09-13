@@ -64,7 +64,7 @@ const ImageUploadField = React.forwardRef<
       required = false,
       className = "",
       labelClassName = "",
-      inputClassName = "",
+      /*  inputClassName = "", */
       disabled = false, // This prop is correctly typed and used below
       width = "100%",
       error,
@@ -76,8 +76,8 @@ const ImageUploadField = React.forwardRef<
       imageDimensions,
       onChange, // This is the onChange from RHF or parent
       onBlur, // This is the onBlur from RHF or parent
-      autoFocus,
-      onKeyDown,
+      /*  autoFocus,
+      onKeyDown, */
       ...htmlInputProps
     },
     ref

@@ -19,11 +19,11 @@ export function useRestaurantInfo(tenantSlug: string | undefined) {
       .eq("tenant_id", tenantId)
       .single(); // only one record per tenant
 
-    if (error) throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   };
 
-  const query = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["restaurant-info", tenantSlug],
     queryFn: fetchInfo,
     enabled: !!tenantSlug,
@@ -55,5 +55,5 @@ export function useRestaurantInfo(tenantSlug: string | undefined) {
     };
   }, [tenantSlug, queryClient]);
 
-  return query;
+  return { data, isLoading };
 }

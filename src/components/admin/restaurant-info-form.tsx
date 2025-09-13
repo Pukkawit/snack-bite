@@ -4,13 +4,14 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resolver } from "react-hook-form";
-import { supabase } from "@/lib/supabase/client";
+import { useEffect } from "react";
+/* import { supabase } from "@/lib/supabase/client";
 import { fetchTenantIdBySlug } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import toast from "react-hot-toast";
+/* import toast from "react-hot-toast"; */
 import { useMemo } from "react";
 import { GoogleMapsInput } from "../google-maps-input";
 import MediaUploader from "../MediaUploader";
@@ -19,6 +20,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 import PhoneField from "../ui/PhoneField";
+import { useRestaurantInfoMutations } from "@/hooks/db/useRestaurantInfoMutations";
+import { useRestaurantInfo } from "@/hooks/db/useRestaurantInfo";
 
 // ---------------- Zod schema ----------------
 const sectionText = z.string().transform((v) => (v?.trim() ? v : undefined));
@@ -86,11 +89,11 @@ const restaurantInfoSchema = z.object({
   additional_json: z.string().optional(),
 });
 
-type RestaurantInfoFormValues = z.infer<typeof restaurantInfoSchema>;
+export type RestaurantInfoFormValues = z.infer<typeof restaurantInfoSchema>;
 
 // ---------------- Component ----------------
 export function RestaurantInfoForm() {
-  const queryClient = useQueryClient();
+  /* const queryClient = useQueryClient(); */
   const params = useParams();
   const tenantSlug = params?.tenantSlug as string;
 
@@ -157,7 +160,7 @@ export function RestaurantInfoForm() {
   };
 
   // Small helpers
-  const cleanArray = (arr?: (string | undefined)[]) =>
+  /*   const cleanArray = (arr?: (string | undefined)[]) =>
     (arr ?? []).map((s) => (s ?? "").trim()).filter(Boolean);
 
   const parseAdditional = (jsonStr?: string) => {
@@ -167,10 +170,13 @@ export function RestaurantInfoForm() {
     } catch {
       return "__INVALID__";
     }
-  };
+  }; */
 
-  // ---------------- Mutation (INSERT) ----------------
-  const mutation = useMutation({
+  const { data, isLoading } = useRestaurantInfo(tenantSlug);
+
+  // ---------------- Mutation (UPSERT) since only one row per tenant is expected ----------------
+  const { upsert } = useRestaurantInfoMutations(tenantSlug);
+  /* const mutation = useMutation({
     mutationFn: async (values: RestaurantInfoFormValues) => {
       const tenantId = await fetchTenantIdBySlug(tenantSlug);
 
@@ -228,11 +234,56 @@ export function RestaurantInfoForm() {
     onError: (err: unknown) => {
       toast.error((err as Error)?.message || "Failed to save restaurant info");
     },
-  });
+  }); */
 
   const onSubmit = (data: RestaurantInfoFormValues) => {
-    mutation.mutate(data);
+    upsert.mutate(data);
   };
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        hero_section: {
+          tagline: data.hero_section?.tagline ?? "",
+          description: data.hero_section?.description ?? "",
+          // convert string[] from DB back to file objects for MediaUploader
+          imageUrls: (data.hero_section?.imageUrls ?? []).map(
+            (url: string) => ({
+              id: url,
+              name: url.split("/").pop() ?? "image",
+              url,
+            })
+          ),
+        },
+        about_section: {
+          title: data.about_section?.title ?? "",
+          subtitle: data.about_section?.subtitle ?? "",
+          description: data.about_section?.description ?? "",
+          established: data.about_section?.established ?? "",
+          happy_customers: data.about_section?.happy_customers ?? "",
+          paragraphs: data.about_section?.paragraphs ?? [],
+          imageUrls: (data.about_section?.imageUrls ?? []).map(
+            (url: string) => ({
+              id: url,
+              name: url.split("/").pop() ?? "image",
+              url,
+            })
+          ),
+        },
+        menu_section: {
+          title: data.menu_section?.title ?? "",
+          description: data.menu_section?.description ?? "",
+        },
+        google_maps_embed: data.google_maps_embed ?? "",
+        whatsapp: data.whatsapp ?? "",
+        address: data.address ?? "",
+        phone: data.phone ?? "",
+        additional_json: data.additional
+          ? JSON.stringify(data.additional, null, 2)
+          : "{}",
+      });
+    }
+  }, [data, reset]);
 
   // Section wrapper
   const Section = useMemo(
@@ -522,8 +573,8 @@ export function RestaurantInfoForm() {
         />
       </Section>
 
-      <Button type="submit" disabled={mutation.isPending} className="w-full">
-        {mutation.isPending ? "Saving..." : "Save Restaurant Info"}
+      <Button type="submit" disabled={upsert.isPending} className="w-full">
+        {upsert.isPending ? "Saving..." : "Save Restaurant Info"}
       </Button>
     </form>
   );

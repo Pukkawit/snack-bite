@@ -1,4 +1,4 @@
-import { getStrictComparableName } from "./utils";
+/* import { getStrictComparableName } from "./utils"; */
 
 export async function uploadToCloudinary(
   file: File,
@@ -9,7 +9,7 @@ export async function uploadToCloudinary(
     folderName?: string;
     publicIdPrefix?: string; // use this to build public_id prefix
   },
-  onProgress?: (p: number) => void
+  onProgress?: (p: number) => void,
 ): Promise<CloudinaryUploadResult> {
   const formData = new FormData();
   formData.append("file", file, originalFileName);
@@ -23,8 +23,7 @@ export async function uploadToCloudinary(
   // Build the public_id manually, e.g. 'folderName/publicIdPrefix_basenameWithoutExt'
   // Extract basename without extension from originalFileName
   const baseNameWithoutExt = originalFileName.replace(/\.[^/.]+$/, "");
-  const publicId =
-    (folder ? folder + "/" : "") +
+  const publicId = (folder ? folder + "/" : "") +
     (options.publicIdPrefix ? options.publicIdPrefix + "_" : "") +
     baseNameWithoutExt;
 
@@ -39,7 +38,7 @@ export async function uploadToCloudinary(
     xhr.open(
       "POST",
       `https://api.cloudinary.com/v1_1/${options.cloudName.trim()}/upload`,
-      true
+      true,
     );
 
     if (onProgress) {

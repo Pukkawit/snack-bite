@@ -128,10 +128,12 @@ export function HeroSection() {
   const heroImages =
     restaurantInfo?.hero_section?.imageUrls &&
     restaurantInfo.hero_section.imageUrls.length > 0
-      ? restaurantInfo.hero_section.imageUrls.map((img: ExistingFile) => ({
-          src: img.url,
-          alt: img.name || "Hero image",
-        }))
+      ? restaurantInfo.hero_section.imageUrls.map(
+          (url: string, index: number) => ({
+            src: url,
+            alt: `hero-image-${index}` || "Hero image",
+          })
+        )
       : [];
 
   const tagLine =

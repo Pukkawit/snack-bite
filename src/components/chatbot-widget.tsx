@@ -218,6 +218,7 @@ export function ChatbotWidget({
                   {vendorInfo.isOnline ? "Online" : "Offline"}
                 </span>
               </div>
+              <div>{businessName}</div>
             </div>
           </div>
           <Button

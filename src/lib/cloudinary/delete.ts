@@ -1,7 +1,7 @@
 export async function deleteFromCloudinary(
   publicId: string,
-  cloudName: string
-): Promise<{ success: boolean; error?: string; result?: any }> {
+  cloudName: string,
+): Promise<{ success: boolean; error?: string; result?: CloudinaryResource }> {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
 
@@ -22,7 +22,7 @@ export async function deleteFromCloudinary(
       {
         method: "POST",
         body: formData,
-      }
+      },
     );
 
     if (!response.ok) {

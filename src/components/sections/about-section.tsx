@@ -127,40 +127,40 @@ export function AboutSection() {
             <div className="grid grid-cols-2 gap-4">
               <Image
                 src={
-                  aboutSectionImages[0]?.url ||
+                  aboutSectionImages[0] ||
                   "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg"
                 }
-                alt={aboutSectionImages[0]?.name || "Delicious burger"}
+                alt={aboutSectionImages[0] || "Delicious burger"}
                 className="rounded-lg shadow-lg aspect-square object-cover"
                 width={200}
                 height={200}
               />
               <Image
                 src={
-                  aboutSectionImages[1]?.url ||
+                  aboutSectionImages[1] ||
                   "https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg"
                 }
-                alt={aboutSectionImages[1]?.name || "Crispy chicken wings"}
+                alt={aboutSectionImages[1] || "Crispy chicken wings"}
                 className="rounded-lg shadow-lg aspect-square object-cover mt-8"
                 width={200}
                 height={200}
               />
               <Image
                 src={
-                  aboutSectionImages[2]?.url ||
+                  aboutSectionImages[2] ||
                   "https://images.pexels.com/photos/7613568/pexels-photo-7613568.jpeg"
                 }
-                alt={aboutSectionImages[2]?.name || "Loaded nachos"}
+                alt={aboutSectionImages[2] || "Loaded nachos"}
                 className="rounded-lg shadow-lg aspect-square object-cover -mt-8"
                 width={200}
                 height={200}
               />
               <Image
                 src={
-                  aboutSectionImages[3]?.url ||
+                  aboutSectionImages[3] ||
                   "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg"
                 }
-                alt={aboutSectionImages[3]?.name || "Cheesecake slice"}
+                alt={aboutSectionImages[3] || "Cheesecake slice"}
                 className="rounded-lg shadow-lg aspect-square object-cover"
                 width={200}
                 height={200}

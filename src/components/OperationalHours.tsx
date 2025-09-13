@@ -207,7 +207,14 @@ const DaySchedule: React.FC<{
   size: "sm" | "md" | "lg";
   variant: "default" | "compact" | "expanded";
   disabled?: boolean;
-}> = ({ day, slots, onSlotsChange, timeFormat, size, variant, disabled }) => {
+}> = ({
+  day,
+  slots,
+  onSlotsChange,
+  timeFormat,
+  size,
+  /* variant, */ disabled,
+}) => {
   const [isEnabled, setIsEnabled] = useState(slots.length > 0);
 
   // Update isEnabled when slots change from parent
@@ -439,6 +446,7 @@ export const OperationalHours = forwardRef<
       <div
         className={`operational-hours ${containerClasses[size]} ${variantClasses[variant]} ${className}`}
       >
+        {label && <label>{label}</label>}
         {/* Hidden input for form compatibility */}
         <input
           ref={hiddenInputRef}

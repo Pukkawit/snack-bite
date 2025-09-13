@@ -49,10 +49,13 @@ const formatPhoneNumber = (
 ): string => {
   if (!localNumber) return "";
 
+  // Clean the country code to ensure it's just digits
+  const cleanCountryCode = countryCode.replace(/\D/g, "");
+
   switch (format) {
     case "whatsapp":
       const cleanLocal = localNumber.replace(/^0+/, "");
-      return countryCode + cleanLocal;
+      return cleanCountryCode + cleanLocal;
 
     case "call":
       if (countryIso === "NG") {
@@ -66,11 +69,12 @@ const formatPhoneNumber = (
         }
         return localNumber;
       } else {
-        return countryCode + localNumber;
+        return "+" + cleanCountryCode + localNumber;
       }
 
     case "international":
-      return countryCode + localNumber;
+      const cleanLocalForIntl = localNumber.replace(/^0+/, "");
+      return "+" + cleanCountryCode + cleanLocalForIntl;
 
     case "national":
       if (countryIso === "NG" && !localNumber.startsWith("0")) {
@@ -82,7 +86,8 @@ const formatPhoneNumber = (
       return localNumber.replace(/^0+/, "");
 
     default:
-      return countryCode + localNumber;
+      const cleanLocalDefault = localNumber.replace(/^0+/, "");
+      return "+" + cleanCountryCode + cleanLocalDefault;
   }
 };
 
@@ -178,33 +183,35 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
     const formattedNumbers = useMemo(() => {
       if (!localPhoneNumber) return {};
 
+      const cleanCountryCode = selectedCode.code.replace(/\D/g, "");
+
       return {
         whatsapp: formatPhoneNumber(
-          selectedCode.code.replace(/\D/g, ""),
+          cleanCountryCode,
           localPhoneNumber,
           "whatsapp",
           selectedCode.iso
         ),
         call: formatPhoneNumber(
-          selectedCode.code,
+          cleanCountryCode,
           localPhoneNumber,
           "call",
           selectedCode.iso
         ),
         international: formatPhoneNumber(
-          selectedCode.code,
+          cleanCountryCode,
           localPhoneNumber,
           "international",
           selectedCode.iso
         ),
         national: formatPhoneNumber(
-          selectedCode.code,
+          cleanCountryCode,
           localPhoneNumber,
           "national",
           selectedCode.iso
         ),
         local: formatPhoneNumber(
-          selectedCode.code,
+          cleanCountryCode,
           localPhoneNumber,
           "local",
           selectedCode.iso
@@ -255,7 +262,9 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
     const handleCountrySelect = (country: CountryCode) => {
       setSelectedCode(country);
       setShowCountryCode(false);
-      const newFullValue = country.code + localPhoneNumber;
+      const cleanCountryCode = country.code.replace(/\D/g, "");
+      const cleanLocal = localPhoneNumber.replace(/^0+/, "");
+      const newFullValue = "+" + cleanCountryCode + cleanLocal;
       console.log(
         `[PhoneField] Country selected: ${country.code}, New full value: ${newFullValue}`
       );
@@ -281,7 +290,8 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
 
       setLocalPhoneNumber(val);
 
-      const newFullValue = selectedCode.code + val;
+      const cleanCountryCode = selectedCode.code.replace(/\D/g, "");
+      const newFullValue = "+" + cleanCountryCode + val;
       console.log(`[PhoneField] New full value to propagate: ${newFullValue}`);
 
       if (onChange) {
@@ -470,156 +480,3 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
 PhoneField.displayName = "PhoneField";
 
 export default PhoneField;
-
-/* 
-
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import PhoneField from "@/components/phone-field"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-
-export default function PhoneTestPage() {
-  const [phoneValue, setPhoneValue] = useState("")
-  const [formData, setFormData] = useState({
-    whatsappNumber: "",
-    callNumber: "",
-  })
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneValue(e.target.value)
-  }
-
-  const handleWhatsAppClick = (whatsappNumber: string) => {
-    setFormData((prev) => ({ ...prev, whatsappNumber }))
-    console.log("WhatsApp number:", whatsappNumber)
-  }
-
-  const handleCallClick = (callNumber: string) => {
-    setFormData((prev) => ({ ...prev, callNumber }))
-    console.log("Call number:", callNumber)
-  }
-
-  return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Enhanced Phone Field Test</h1>
-        <p className="text-muted-foreground">Test the phone field with WhatsApp and call formatting</p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Full Featured Phone Field</CardTitle>
-            <CardDescription>With WhatsApp and call buttons, automatic formatting</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <PhoneField
-              label="Phone Number"
-              instruction="Enter your phone number to see WhatsApp and call formatting"
-              value={phoneValue}
-              onChange={handlePhoneChange}
-              formatOptions={{ whatsapp: true, call: true }}
-              showFormatButtons={true}
-              onWhatsAppClick={handleWhatsAppClick}
-              onCallClick={handleCallClick}
-              placeholder="Enter phone number"
-            />
-
-            <div className="space-y-2 text-sm">
-              <p>
-                <strong>Raw Value:</strong> {phoneValue}
-              </p>
-              <p>
-                <strong>WhatsApp Format:</strong> {formData.whatsappNumber}
-              </p>
-              <p>
-                <strong>Call Format:</strong> {formData.callNumber}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>WhatsApp Only</CardTitle>
-            <CardDescription>Only WhatsApp formatting enabled</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PhoneField
-              label="WhatsApp Number"
-              instruction="This field only shows WhatsApp formatting"
-              value={phoneValue}
-              onChange={handlePhoneChange}
-              formatOptions={{ whatsapp: true, call: false }}
-              showFormatButtons={true}
-              placeholder="Enter WhatsApp number"
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Call Only</CardTitle>
-            <CardDescription>Only call formatting enabled</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PhoneField
-              label="Call Number"
-              instruction="This field only shows call formatting"
-              value={phoneValue}
-              onChange={handlePhoneChange}
-              formatOptions={{ whatsapp: false, call: true }}
-              showFormatButtons={true}
-              placeholder="Enter call number"
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Phone Field</CardTitle>
-            <CardDescription>No formatting buttons, just basic functionality</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PhoneField
-              label="Basic Phone"
-              instruction="Basic phone field without formatting buttons"
-              value={phoneValue}
-              onChange={handlePhoneChange}
-              showFormatButtons={false}
-              placeholder="Enter phone number"
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Usage Examples</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <h4 className="font-semibold">Nigeria Examples:</h4>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• Input: 08030000000 → WhatsApp: 2348030000000, Call: 08030000000</li>
-              <li>• Input: 8030000000 → WhatsApp: 2348030000000, Call: 08030000000</li>
-            </ul>
-          </div>
-          <div className="space-y-2">
-            <h4 className="font-semibold">USA Examples:</h4>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• Input: 2025000000 → WhatsApp: 12025000000, Call: (202) 500-0000</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-
-
-*/
