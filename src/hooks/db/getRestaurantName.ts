@@ -1,35 +1,31 @@
 "use client";
 
 import { supabase } from "@/lib/supabase/client";
+import { fetchTenantIdBySlug } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-async function getRestaurantName(userId: string) {
+async function getRestaurantName(tenantSlug: string | undefined) {
+  if (!tenantSlug) return null;
+
+  const tenant_id = await fetchTenantIdBySlug(tenantSlug);
+
   // fetch profile → tenant_id
-  const { data: profile, error: profileError } = await supabase
-    .from("snack_bite_profile")
-    .select("tenant_id")
-    .eq("id", userId)
-    .single();
-
-  if (profileError) throw profileError;
-
-  // fetch tenant → restaurant_name
-  const { data: tenant, error: tenantError } = await supabase
-    .from("snack_bite_tenants")
+  const { data: restaurantInfo, error: restaurantInfoError } = await supabase
+    .from("snack_bite_restaurant_info")
     .select("restaurant_name")
-    .eq("id", profile.tenant_id)
+    .eq("tenant_id", tenant_id)
     .single();
 
-  if (tenantError) throw tenantError;
+  if (restaurantInfoError) throw restaurantInfoError;
 
-  return tenant.restaurant_name;
+  return restaurantInfo.restaurant_name;
 }
 
-export function useRestaurantName(userId: string) {
+export function useRestaurantName(tenant_id: string) {
   return useQuery({
-    queryKey: ["restaurant_name", userId],
-    queryFn: () => getRestaurantName(userId),
-    enabled: !!userId, // don’t run until we have a userId
+    queryKey: ["restaurant_name", tenant_id],
+    queryFn: () => getRestaurantName(tenant_id),
+    enabled: !!tenant_id, // don’t run until we have a tenant_id
     refetchOnWindowFocus: false,
     staleTime: Infinity,
     refetchInterval(query) {

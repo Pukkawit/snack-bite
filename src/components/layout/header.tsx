@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useCartContext } from "@/providers/cart-provider";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
-import { useProfile } from "@/hooks/db/getUserProfile";
 import { useRestaurantName } from "@/hooks/db/getRestaurantName";
 import { cn, getInitials, normalizeRestaurantName } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 const navigation = [
   { name: "Home", id: "home" },
@@ -30,11 +30,15 @@ export function Header() {
     navigation.forEach((nav) => nav.id === sectionId && setActiveMenu(nav.id));
   };
 
-  const { profile } = useProfile();
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string | undefined;
 
-  const { data: restaurantName } = useRestaurantName(
-    profile?.userId ?? "SnackBite"
-  );
+  const { data: restaurantName } = useRestaurantName(tenantSlug ?? "SnackBite");
+
+  /*  console.log("Restaurant Info", {
+    tenantSlug: tenantSlug,
+    retaurantName: restaurantName,
+  }); */
 
   useEffect(() => {
     const handleScroll = () => {

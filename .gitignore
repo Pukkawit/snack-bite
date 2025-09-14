@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/sql_commands
 /.pnp
 .pnp.*
 .yarn/*

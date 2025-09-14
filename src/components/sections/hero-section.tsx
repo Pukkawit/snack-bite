@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useProfile } from "@/hooks/db/getUserProfile";
 import { useRestaurantName } from "@/hooks/db/getRestaurantName";
 import { normalizeRestaurantName } from "@/lib/utils";
 import { useRestaurantInfo } from "@/hooks/db/useRestaurantInfo";
@@ -107,17 +106,12 @@ export function HeroSection() {
     document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { profile } = useProfile();
-
-  const { data: restaurantName } = useRestaurantName(
-    profile?.userId ?? "SnackBite"
-  );
-
   const params = useParams();
   const tenantSlug = params.tenantSlug as string | undefined;
 
   const { data: restaurantInfo } = useRestaurantInfo(tenantSlug);
 
+  const { data: restaurantName } = useRestaurantName(tenantSlug ?? "SnackBite");
   const { data: openingHours } = useOpeningHoursSection(tenantSlug);
 
   const openingStatus =
