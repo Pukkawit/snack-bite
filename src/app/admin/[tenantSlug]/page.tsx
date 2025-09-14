@@ -37,7 +37,10 @@ export default function AdminPage() {
               </div>
             </div>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent
+            className="max-w-lg"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <DialogTitle>Profile Settings</DialogTitle>
             <ProfileForm />
           </DialogContent>

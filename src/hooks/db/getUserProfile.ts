@@ -10,7 +10,7 @@ async function fetchProfile() {
 
   const { data, error } = await supabase
     .from("snack_bite_profile")
-    .select("id, full_name, avatar_url")
+    .select("id, full_name, avatar_url, avatar_storage_path")
     .eq("id", user.id)
     .single();
 

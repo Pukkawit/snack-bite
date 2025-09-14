@@ -9,15 +9,17 @@ import { useRestaurantName } from "@/hooks/db/getRestaurantName";
 import toast from "react-hot-toast";
 import { useProfile } from "@/hooks/db/getUserProfile";
 import { getInitials } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 export function AdminPanel() {
   const router = useRouter();
 
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string | undefined;
+
   const { profile, isLoading } = useProfile();
 
-  const { data: restaurantName } = useRestaurantName(
-    profile?.userId ?? "SnackBite"
-  );
+  const { data: restaurantName } = useRestaurantName(tenantSlug ?? "SnackBite");
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();

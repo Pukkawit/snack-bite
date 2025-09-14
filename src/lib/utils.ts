@@ -24,6 +24,46 @@ export async function fetchTenantIdBySlug(slug: string): Promise<string> {
   if (error || !data) throw new Error("Tenant not found");
   return data.id;
 }
+export async function fetchTenantSlugByEmail(email: string): Promise<string> {
+  const { data, error } = await supabase
+    .from("snack_bite_tenants")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  if (error || !data) throw new Error("Tenant not found");
+  return data.slug;
+}
+
+export async function fetchTenantSlugFromAuth(): Promise<string> {
+  // Get the current logged-in user
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) throw new Error("User not found");
+
+  // Fetch tenant info by user_id (foreign key to auth.users.id)
+  const { data: tenant, error: tenantError } = await supabase
+    .from("snack_bite_tenant_owners")
+    .select("slug, user_id")
+    .eq("user_id", data.user.id) // this matches the table
+    .single();
+
+  if (tenantError || !tenant) throw new Error("Tenant not found");
+
+  /*   console.log("User Credentials", {
+    "Auth Id: ": data.user.id,
+    "Tenant User Id: ": tenant.user_id,
+    "Tenant Slug: ": tenant.slug,
+  }); */
+
+  return tenant.slug;
+}
+
+/* export async function fetchTenantSlugFromAuth(): Promise<string> {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) throw new Error("User not found");
+
+  return data.user.user_metadata?.tenant_slug;
+} */
 
 export const getInitials = (name?: string | null) =>
   name

@@ -32,9 +32,15 @@ export default function Register() {
   }) => {
     setIsLoading(true);
 
+    const slug = await getUniqueTenantSlug(data.restaurant_name);
     const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: {
+        data: {
+          tenant_slug: slug,
+        },
+      },
     });
 
     if (error) {
@@ -49,8 +55,6 @@ export default function Register() {
         setIsLoading(false);
         return;
       }
-
-      const slug = await getUniqueTenantSlug(data.restaurant_name);
 
       // Just insert into tenant_owners now
       const { error: ownerError } = await supabase

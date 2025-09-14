@@ -75,12 +75,13 @@ export function ProfileForm() {
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      const ext = file.name.split(".").pop();
-      const filePath = `${user.id}/avatar-${Date.now()}.${ext ?? "png"}`;
+      const ext = file.name.split(".").pop() || "png";
+      const filePath = `${user.id}/avatar.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
         .upload(filePath, file, { upsert: true });
+
       if (uploadError) throw uploadError;
 
       /* SIGNED URL */
@@ -95,6 +96,17 @@ export function ProfileForm() {
           ? { ...prev, avatar_url: signedUrl, avatar_storage_path: filePath }
           : prev
       );
+
+      const { error } = await supabase
+        .from("snack_bite_profile")
+        .update({
+          avatar_url: signedUrl,
+          avatar_storage_path: filePath,
+        })
+        .eq("id", user.id);
+
+      handleProfileUpdate();
+      if (error) throw error;
 
       /* PUBLIC URL */
       /*  const { data: publicUrlData } = supabase.storage
@@ -127,8 +139,8 @@ export function ProfileForm() {
         .from("snack_bite_profile")
         .update({
           full_name: formData.full_name,
-          avatar_url: formData.avatar_url,
-          avatar_storage_path: formData.avatar_storage_path,
+          /* avatar_url: formData.avatar_url,
+          avatar_storage_path: formData.avatar_storage_path, */
         })
         .eq("id", formData.id);
 
