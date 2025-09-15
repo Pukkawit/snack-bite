@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://restaurants-iota-blond.vercel.app/"),
+  metadataBase: new URL("https://restaurants-lemon.vercel.app/"),
   alternates: {
     canonical: "/",
   },
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "SnackBite - Modern Restaurant Platform",
     description:
       "Transform your restaurant with our comprehensive platform featuring WhatsApp ordering, dynamic menus, and powerful admin tools.",
-    url: "https://restaurants-iota-blond.vercel.app/",
+    url: "https://restaurants-lemon.vercel.app/",
     siteName: "SnackBite",
     images: [
       {

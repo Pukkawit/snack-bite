@@ -86,14 +86,14 @@ Accessible only to logged-in users (protected by Supabase Auth + Middleware).
 
 ## 🛠️ Tech Stack
 
-_-_ Framework: Next.js 15 (App Router).
-\_\__Language: TypeScript.
-_\__ Styling: Tailwind CSS 4.
-_\__ Animations: Framer Motion.
-_\__ Database: Supabase (PostgreSQL + RLS).
-_\__ Auth: Supabase Auth (email/password, Google).
-_\__ Storage: Cloudinary (for images).
-_\_\_ Deployment: Vercel / Netlify (recommended).
+- Framework: Next.js 15 (App Router).
+- Language: TypeScript.
+- Styling: Tailwind CSS 4.
+- Animations: Framer Motion.
+- Database: Supabase (PostgreSQL + RLS).
+- Auth: Supabase Auth (email/password, Google).
+- Storage: Cloudinary (for images).
+- Deployment: Vercel / Netlify (recommended).
 
 ## 🚀 Getting Started
 
@@ -131,6 +131,7 @@ NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET = your - upload - preset;
 Run migrations/seeding from /supabase/migrations:
 
 ```bash
+
 supabase db push
 
 ```
@@ -147,7 +148,7 @@ Visit http://localhost:3000
 
 ## 🔐 Demo Credentials
 
-To explore the admin panel:
+[Demo link](https://restaurants-lemon.vercel.app/)
 
 ```javascript
 
@@ -156,22 +157,27 @@ Password: admin123
 
 ```
 
+### Admin Panel
+
+[Admin Panel](https://restaurants-lemon.vercel.app/admin)
+
 ## 📖 Roadmap
 
-✅ Batch 1: Restaurant website core features (menu, cart, banners, info).
-✅ Batch 2: Admin panel CRUD with Supabase RLS + auth.
-✅ Batch 3: Database constraints (unique + foreign key).
-⬜ Batch 4: Multi-tenant support with subdomains.
-⬜ Batch 5: Vendor onboarding & subscription management.
-⬜ Batch 6: Advanced analytics & reporting.
+- ✅ Batch 1: Restaurant website core features (menu, cart, banners, info).
+- ✅ Batch 2: Admin panel CRUD with Supabase RLS + auth.
+- ✅ Batch 3: Database constraints (unique + foreign key).
+- ⬜ Batch 4: Multi-tenant support with subdomains.
+- ⬜ Batch 5: Vendor onboarding & subscription management.
+- ⬜ Batch 6: Advanced analytics & reporting.
 
-📸 Screenshots
+## 📸 Screenshots
 
-(Add app screenshots here for landing page, menu, admin panel, etc.)
-**Hero Section**: ![hero_section](/screenshots/hero_section.png)
-**Featured Section**: ![featured](/screenshots/featured.png)
-**Opening Hours/Contact**: ![opening_hours_contact](/screenshots/opening_hours_contact.png)
-**Categories Filter**: ![categories_filter](/screenshots/categories_filter.png)
+Click on any of them to open the actual screenshot
+
+- **[Hero Ssection](https://apvuyqcvxtmncdivszts.supabase.co/storage/v1/object/public/screenshots/1757937615520-hero_section.png)**
+- **[Featured](https://apvuyqcvxtmncdivszts.supabase.co/storage/v1/object/public/screenshots/1757937631040-featured.png)**
+- **[Opening Hours/Contact](https://apvuyqcvxtmncdivszts.supabase.co/storage/v1/object/public/screenshots/1757937664250-opening_hours_contact.png)**
+- **[Categories Filter](https://apvuyqcvxtmncdivszts.supabase.co/storage/v1/object/public/screenshots/1757937648408-categories_filter.png)**
 
 ## 🤝 Contributing
 
@@ -187,10 +193,10 @@ MIT License © 2025 SnackBite Team
 
 ## 📞 Contact
 
-Developer: Witty Umosung (Pukkawit)
-Email: [wittyumosung@gmail.com]
-LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/witty-umosung)
-Portfolio: [Portfolio Website](https://portfolio-witty-umosung.vercel.app)
+. Developer: Witty Umosung (Pukkawit)
+. Email: [wittyumosung@gmail.com]
+. LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/witty-umosung)
+. Portfolio: [Portfolio Website](https://portfolio-witty-umosung.vercel.app)
 
 🌟 Star this repo if you found it helpful!
 Made with ❤️ and ☕ for multi-tenancy demonstration
