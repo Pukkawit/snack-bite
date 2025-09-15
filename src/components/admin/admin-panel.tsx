@@ -41,7 +41,7 @@ export function AdminPanel() {
   }
 
   return (
-    <div className="bg-muted/50 py-4 shadow-sm mb-4">
+    <div className="bg-muted py-4 z-50 shadow-sm mb-4">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-3">
