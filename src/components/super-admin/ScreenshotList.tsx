@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import { fetchScreenshots } from "@/lib/db/fetchScreenshots";
+import Link from "next/link";
 
 export default function ScreenshotList() {
   const queryClient = useQueryClient();
@@ -45,10 +46,19 @@ export default function ScreenshotList() {
             height={150}
             width={150}
           />
-          <p className="mt-2 text-xs break-all">{file.url}</p>
+          <div className="flex p-4 items-center justify-center">
+            <Link
+              href={file.url}
+              target="_blank"
+              className="text-xs text-muted-foreground/50 break-all hover:text-violet-400"
+            >
+              {file.url}
+            </Link>
+          </div>
           <button
+            type="button"
             onClick={() => handleDelete(file.name)}
-            className="mt-2 px-2 py-1 bg-red-600 text-white text-xs rounded"
+            className="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
           >
             Delete
           </button>
