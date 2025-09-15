@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /sql_commands
+/mockups
 /.pnp
 .pnp.*
 .yarn/*

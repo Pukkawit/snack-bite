@@ -5,15 +5,43 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight, Gift, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { fetchTenantIdBySlug } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 export function PromoBanner() {
   const [banners, setBanners] = useState<PromoBanner[]>([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string | undefined;
+
+  /* const tenantId = async () => {
+    const tenantId = await fetchTenantIdBySlug(tenantSlug || "");
+    return tenantId;
+  }; */
+
   useEffect(() => {
+    const fetchPromoBanners = async () => {
+      const tenantId = await fetchTenantIdBySlug(tenantSlug || "");
+
+      const { data, error } = await supabase
+        .from("snack_bite_promo_banners")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .eq("active", true)
+        .or("expires_at.is.null,expires_at.gt.now()");
+
+      if (error) {
+        console.error("Error fetching promo banners:", error);
+        return;
+      }
+
+      setBanners(data || []);
+    };
+
     fetchPromoBanners();
-  }, []);
+  }, [tenantSlug]);
 
   useEffect(() => {
     if (banners.length > 1) {
@@ -23,21 +51,6 @@ export function PromoBanner() {
       return () => clearInterval(interval);
     }
   }, [banners.length]);
-
-  const fetchPromoBanners = async () => {
-    const { data, error } = await supabase
-      .from("snack_bite_promo_banners")
-      .select("*")
-      .eq("is_active", true)
-      .or("expires_at.is.null,expires_at.gt.now()");
-
-    if (error) {
-      console.error("Error fetching promo banners:", error);
-      return;
-    }
-
-    setBanners(data || []);
-  };
 
   if (!isVisible || banners.length === 0) {
     return null;

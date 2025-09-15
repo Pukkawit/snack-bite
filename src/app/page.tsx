@@ -139,7 +139,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 bg-clip-text text-transparent leading-tight"
+            className="text-5xl leading-tightest  md:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-600  via-yellow-200 to-lime-500 bg-clip-text text-transparent md:leading-tight"
           >
             Transform Your Restaurant with SnackBite
           </motion.h1>
@@ -148,7 +148,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl leading-tight text-muted-foreground mb-8 max-w-3xl mx-auto md:leading-relaxed"
           >
             The complete restaurant platform with WhatsApp ordering, dynamic
             menus, admin dashboard, and multi-tenant support. Built for modern
@@ -451,6 +451,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Features
@@ -461,6 +462,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Pricing
@@ -483,6 +485,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   About
@@ -493,6 +496,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Contact
@@ -503,6 +507,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Blog
@@ -519,6 +524,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Documentation
@@ -529,6 +535,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Help Center
@@ -539,6 +546,7 @@ export default function Home() {
                   )}?text=${encodeURIComponent(
                     "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                   )}`}
+                  target="_blank"
                   className="block text-muted-foreground hover:text-primary"
                 >
                   Status
@@ -558,6 +566,7 @@ export default function Home() {
                 )}?text=${encodeURIComponent(
                   "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                 )}`}
+                target="_blank"
                 className="text-muted-foreground hover:text-primary"
               >
                 Privacy
@@ -568,12 +577,14 @@ export default function Home() {
                 )}?text=${encodeURIComponent(
                   "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
                 )}`}
+                target="_blank"
                 className="text-muted-foreground hover:text-primary"
               >
                 Terms
               </Link>
               <Link
                 href="/cookies"
+                target="_blank"
                 className="text-muted-foreground hover:text-primary"
               >
                 Cookies
@@ -613,21 +624,27 @@ export default function Home() {
           {
             label: "View Demo",
             action: () => {
-              window.location.href = `https://wa.me/${encodeURIComponent(
-                "2348136289052"
-              )}?text=${encodeURIComponent(
-                "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
-              )}`;
+              window.open(
+                `https://wa.me/${encodeURIComponent(
+                  "2348136289052"
+                )}?text=${encodeURIComponent(
+                  "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
+                )}`,
+                "_blank"
+              );
             },
           },
           {
             label: "Pricing Info",
             action: () => {
-              window.location.href = `https://wa.me/${encodeURIComponent(
-                "2348136289052"
-              )}?text=${encodeURIComponent(
-                "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
-              )}`;
+              window.open(
+                `https://wa.me/${encodeURIComponent(
+                  "2348136289052"
+                )}?text=${encodeURIComponent(
+                  "Hi Pukkawit! I found your project at SnackBite and would like to discuss a project."
+                )}`,
+                "_blank"
+              );
             },
           },
           {
