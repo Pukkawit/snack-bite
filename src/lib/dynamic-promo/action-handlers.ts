@@ -24,11 +24,17 @@ export interface ActionConfig {
   };
 }
 
-export async function handleAction(config: ActionConfig): Promise<void> {
+export async function handleAction(
+  whatsappNumber: string,
+  config: ActionConfig,
+): Promise<void> {
   switch (config.type) {
     case "whatsapp":
       if (config.data.message) {
-        const whatsappUrl = await generateWhatsAppURL(config.data.message);
+        const whatsappUrl = await generateWhatsAppURL(
+          whatsappNumber,
+          config.data.message,
+        );
         if (whatsappUrl) {
           window.open(whatsappUrl, "_blank");
         }

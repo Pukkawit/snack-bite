@@ -9,6 +9,7 @@ import {
   handleAction,
   type ActionType,
 } from "@/lib/dynamic-promo/action-handlers";
+import { useWhatsAppPhone } from "@/lib/whatsapp";
 
 interface PromoData {
   title: string;
@@ -55,6 +56,8 @@ export function PromoBannerDynamic({
 
   const currentPromo = promos[currentPromoIndex] || promos[0];
 
+  const whatsappPhone = useWhatsAppPhone();
+
   useEffect(() => {
     if (promos.length > 1) {
       const timer = setInterval(() => {
@@ -83,7 +86,7 @@ export function PromoBannerDynamic({
     setIsClosedByUser(true);
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     const actionConfig: ActionConfig = {
       type: currentPromo.buttonAction.type,
       data: {
@@ -98,7 +101,9 @@ export function PromoBannerDynamic({
         filename: currentPromo.buttonAction.metadata?.filename,
       },
     };
-    handleAction(actionConfig);
+
+    const number = await whatsappPhone;
+    handleAction(number || "", actionConfig);
   };
 
   const FloatingParticles = () => (
