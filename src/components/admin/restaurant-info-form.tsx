@@ -142,10 +142,6 @@ export function RestaurantInfoForm() {
     defaultValues,
   });
 
-  // watch typed fields (cast to the inferred types)
-  const heroImages = watch("hero_section.imageUrls") || [];
-  const aboutImages = watch("about_section.imageUrls") || [];
-
   const paragraphs = watch("about_section.paragraphs") || [];
 
   const addParagraph = () => {
@@ -240,50 +236,42 @@ export function RestaurantInfoForm() {
     upsert.mutate(data);
   };
 
+  const normalizedData = useMemo(() => {
+    if (!data) return null;
+    return {
+      hero_section: {
+        tagline: data.hero_section?.tagline ?? "",
+        description: data.hero_section?.description ?? "",
+        imageUrls: data.hero_section?.imageUrls ?? [],
+      },
+      about_section: {
+        title: data.about_section?.title ?? "",
+        subtitle: data.about_section?.subtitle ?? "",
+        description: data.about_section?.description ?? "",
+        established: data.about_section?.established ?? "",
+        happy_customers: data.about_section?.happy_customers ?? "",
+        paragraphs: data.about_section?.paragraphs ?? [],
+        imageUrls: data.about_section?.imageUrls ?? [],
+      },
+      menu_section: {
+        title: data.menu_section?.title ?? "",
+        description: data.menu_section?.description ?? "",
+      },
+      google_maps_embed: data.google_maps_embed ?? "",
+      whatsapp: data.whatsapp ?? "",
+      address: data.address ?? "",
+      phone: data.phone ?? "",
+      additional_json: data.additional
+        ? JSON.stringify(data.additional, null, 2)
+        : "{}",
+    };
+  }, [data]);
+
   useEffect(() => {
-    if (data) {
-      reset({
-        hero_section: {
-          tagline: data.hero_section?.tagline ?? "",
-          description: data.hero_section?.description ?? "",
-          // convert string[] from DB back to file objects for MediaUploader
-          imageUrls: (data.hero_section?.imageUrls ?? []).map(
-            (url: string) => ({
-              id: url,
-              name: url.split("/").pop() ?? "image",
-              url,
-            })
-          ),
-        },
-        about_section: {
-          title: data.about_section?.title ?? "",
-          subtitle: data.about_section?.subtitle ?? "",
-          description: data.about_section?.description ?? "",
-          established: data.about_section?.established ?? "",
-          happy_customers: data.about_section?.happy_customers ?? "",
-          paragraphs: data.about_section?.paragraphs ?? [],
-          imageUrls: (data.about_section?.imageUrls ?? []).map(
-            (url: string) => ({
-              id: url,
-              name: url.split("/").pop() ?? "image",
-              url,
-            })
-          ),
-        },
-        menu_section: {
-          title: data.menu_section?.title ?? "",
-          description: data.menu_section?.description ?? "",
-        },
-        google_maps_embed: data.google_maps_embed ?? "",
-        whatsapp: data.whatsapp ?? "",
-        address: data.address ?? "",
-        phone: data.phone ?? "",
-        additional_json: data.additional
-          ? JSON.stringify(data.additional, null, 2)
-          : "{}",
-      });
+    if (normalizedData) {
+      reset(normalizedData);
     }
-  }, [data, reset]);
+  }, [normalizedData, reset]);
 
   // Section wrapper
   const Section = useMemo(
@@ -306,276 +294,285 @@ export function RestaurantInfoForm() {
   );
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 max-w-3xl mx-auto"
-    >
-      {/* HERO SECTION */}
-      <Section title="Hero Section">
-        <div>
-          <Input
-            {...register("hero_section.tagline")}
-            placeholder="Best Bites in Town"
-            required
-            label="Tagline"
-          />
-          {errors.hero_section?.tagline && (
-            <p className="text-red-500 text-sm">
-              {errors.hero_section.tagline.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Textarea
-            label="Description"
-            required
-            id="hero_section.description"
-            {...register("hero_section.description")}
-            placeholder="Short hero description..."
-          />
-          {errors.hero_section?.description && (
-            <p className="text-red-500 text-sm">
-              {errors.hero_section.description.message}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <MediaUploader
-            label="Hero Images"
-            folder={`snack-bite/${tenantSlug}/hero-images`}
-            accept="image/*"
-            maxFiles={3}
-            value={heroImages}
-            onUpload={(files) =>
-              // setValue typed to accept the file objects defined in fileSchema
-              setValue("hero_section.imageUrls", files, {
-                shouldValidate: true,
-              })
-            }
-            cloudinaryOptions={{
-              cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "",
-              uploadPreset:
-                process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
-            }}
-            info={
-              heroImages && heroImages?.length < 3 ? (
-                <p className="text-warning text-xs">
-                  Please upload at least 3 images to continue.
-                </p>
-              ) : null
-            }
-            error={errors.hero_section?.imageUrls?.message || ""}
-          />
-        </div>
-      </Section>
-
-      {/* ABOUT SECTION */}
-      <Section title="About Section">
-        <div className="grid md:grid-cols-2 gap-4">
+    <div className="flex flex-col items-center max-w-2xl border border-border rounded-md mx-auto">
+      <h1 className="flex text-center text-xl p-4 bg-foreground/10">
+        Restaurant Details Form
+      </h1>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 max-w-2xl py-2 px-4"
+      >
+        {/* HERO SECTION */}
+        <Section title="Hero Section">
           <div>
             <Input
-              {...register("about_section.title")}
-              placeholder="About Snack Bite"
-              label="Title"
-              id="about_section.title"
+              {...register("hero_section.tagline")}
+              placeholder="Best Bites in Town"
+              required
+              label="Tagline"
             />
-          </div>
-          <div>
-            <Input
-              {...register("about_section.subtitle")}
-              placeholder="Our Story"
-              label="Subtitle"
-              id="about_section.subtitle"
-            />
-          </div>
-        </div>
-
-        <div>
-          <Textarea
-            {...register("about_section.description")}
-            id="about_section.description"
-            placeholder="Longer about description..."
-            label="Description"
-          />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Input
-              label="Established"
-              {...register("about_section.established")}
-              id="about_section.established"
-              placeholder="2014"
-            />
-          </div>
-          <div>
-            <Input
-              label="Happy Customers"
-              {...register("about_section.happy_customers")}
-              placeholder="10,000+"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-3 border p-4 rounded-lg">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Paragraph(s)</label>
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={addParagraph}
-            >
-              Add Paragraph
-            </Button>
-          </div>
-          <Separator />
-          {paragraphs.map((value, idx) => (
-            <div key={idx} className="flex gap-2">
-              <div className="flex-grow min-w-0">
-                <Textarea
-                  {...register(`about_section.paragraphs.${idx}` as const)}
-                  placeholder={`Paragraph ${idx + 1}`}
-                />
-              </div>
-              <div className="flex shrink-0">
-                <DeleteButton
-                  onClick={() => removeParagraph(idx)}
-                  size="icon"
-                  soundEnabled={true}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          <MediaUploader
-            label="About Images"
-            folder={`snack-bite/${tenantSlug}/about-images`}
-            accept="image/*"
-            maxFiles={4}
-            value={aboutImages}
-            onUpload={(files) =>
-              setValue("about_section.imageUrls", files, {
-                shouldValidate: true,
-              })
-            }
-            cloudinaryOptions={{
-              cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "",
-              uploadPreset:
-                process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
-            }}
-            info={
-              aboutImages && aboutImages?.length < 4 ? (
-                <p className="text-warning text-xs">
-                  Please upload 4 images to continue.
-                </p>
-              ) : null
-            }
-            error={errors.about_section?.imageUrls?.message || ""}
-          />
-        </div>
-      </Section>
-
-      {/* MENU SECTION */}
-      <Section title="Menu Section">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Title</label>
-            <Input {...register("menu_section.title")} placeholder="Our Menu" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
-            <Input
-              {...register("menu_section.description")}
-              placeholder="Tasty, fresh, and fast"
-            />
-          </div>
-        </div>
-      </Section>
-
-      {/* CONTACT + MAP */}
-      <Section title="Contact & Map">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <PhoneField
-              label="Phone"
-              {...register("phone")}
-              placeholder="8000000000"
-              formatOptions={{ whatsapp: false, call: true }}
-              showFormatButtons={false}
-            />
-          </div>
-          <div>
-            <PhoneField
-              label="WhatsApp"
-              {...register("whatsapp")}
-              placeholder="8000000000"
-              formatOptions={{ whatsapp: true, call: false }}
-              showFormatButtons={false}
-            />
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Address</label>
-          <Input {...register("address")} placeholder="123 Main Street" />
-        </div>
-        <div>
-          <Controller
-            name="google_maps_embed"
-            control={control}
-            render={({ field, fieldState }) => (
-              <GoogleMapsInput
-                {...field}
-                label="Google Maps Embed URL"
-                instruction={
-                  <Link
-                    href="https://api.whatsapp.com/send/?phone=2348136289052&text=Hi+Pukkawit%21+I+would+like+my+business+to+appear+on+google+search+result.%20Kindly+assist+me+to+register+my+business+on+Google+Business+Profile.&type=phone_number&app_absent=0"
-                    target="_blank"
-                  >
-                    Register your Business on Google Business Profile
-                  </Link>
-                }
-                tooltip={{
-                  message: (
-                    <p>
-                      If you would like your business location to be on the map
-                      (if not yet) and appear on google search result, click{" "}
-                      <Link
-                        href="https://api.whatsapp.com/send/?phone=2348136289052&text=Hi+Pukkawit%21+I+would+like+my+business+to+appear+on+google+search+result.%20Kindly+assist+me+to+register+my+business+on+Google+Business+Profile.&type=phone_number&app_absent=0"
-                        target="_blank"
-                        className="underline text-primary uppercase font-semibold"
-                      >
-                        here
-                      </Link>{" "}
-                      to get started
-                    </p>
-                  ),
-                }}
-                error={fieldState.error?.message}
-                placeholder="Enter your location, e.g. Itu Road, Uyo, Akwa Ibom State"
-                className="w-full"
-              />
+            {errors.hero_section?.tagline && (
+              <p className="text-red-500 text-sm">
+                {errors.hero_section.tagline.message}
+              </p>
             )}
+          </div>
+          <div>
+            <Textarea
+              label="Description"
+              required
+              id="hero_section.description"
+              {...register("hero_section.description")}
+              placeholder="Short hero description..."
+            />
+            {errors.hero_section?.description && (
+              <p className="text-red-500 text-sm">
+                {errors.hero_section.description.message}
+              </p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Controller
+              name="hero_section.imageUrls"
+              control={control}
+              render={({ field }) => (
+                <MediaUploader
+                  label="Hero Images"
+                  folder={`snack-bite/${tenantSlug}/hero-images`}
+                  accept="image/*"
+                  maxFiles={3}
+                  value={field.value}
+                  onUpload={field.onChange}
+                  cloudinaryOptions={{
+                    cloudName:
+                      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "",
+                    uploadPreset:
+                      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
+                  }}
+                  info={
+                    field.value?.length < 3 ? (
+                      <p className="text-warning text-xs">
+                        Please upload at least 3 images to continue.
+                      </p>
+                    ) : null
+                  }
+                  error={errors.hero_section?.imageUrls?.message || ""}
+                />
+              )}
+            />
+          </div>
+        </Section>
+        {/* ABOUT SECTION */}
+        <Section title="About Section">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Input
+                {...register("about_section.title")}
+                placeholder="About Snack Bite"
+                label="Title"
+                id="about_section.title"
+              />
+            </div>
+            <div>
+              <Input
+                {...register("about_section.subtitle")}
+                placeholder="Our Story"
+                label="Subtitle"
+                id="about_section.subtitle"
+              />
+            </div>
+          </div>
+          <div>
+            <Textarea
+              {...register("about_section.description")}
+              id="about_section.description"
+              placeholder="Longer about description..."
+              label="Description"
+            />
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Input
+                label="Established"
+                {...register("about_section.established")}
+                id="about_section.established"
+                placeholder="2014"
+              />
+            </div>
+            <div>
+              <Input
+                label="Happy Customers"
+                {...register("about_section.happy_customers")}
+                placeholder="10,000+"
+              />
+            </div>
+          </div>
+          <div className="space-y-3 border p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Paragraph(s)</label>
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                onClick={addParagraph}
+              >
+                Add Paragraph
+              </Button>
+            </div>
+            <Separator />
+            {paragraphs.map((value, idx) => (
+              <div key={idx} className="flex gap-2">
+                <div className="flex-grow min-w-0">
+                  <Textarea
+                    {...register(`about_section.paragraphs.${idx}` as const)}
+                    placeholder={`Paragraph ${idx + 1}`}
+                  />
+                </div>
+                <div className="flex shrink-0">
+                  <DeleteButton
+                    onClick={() => removeParagraph(idx)}
+                    size="icon"
+                    soundEnabled={true}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <Controller
+              name="about_section.imageUrls"
+              control={control}
+              render={({ field }) => {
+                const fieldValueLength = field.value ? field.value.length : 0;
+                return (
+                  <MediaUploader
+                    label="About Images"
+                    folder={`snack-bite/${tenantSlug}/about-images`}
+                    accept="image/*"
+                    maxFiles={4}
+                    value={field.value}
+                    onUpload={field.onChange}
+                    cloudinaryOptions={{
+                      cloudName:
+                        process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "",
+                      uploadPreset:
+                        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
+                    }}
+                    info={
+                      fieldValueLength < 4 ? (
+                        <p className="text-warning text-xs">
+                          Please upload 4 images to continue.
+                        </p>
+                      ) : null
+                    }
+                    error={errors.about_section?.imageUrls?.message || ""}
+                  />
+                );
+              }}
+            />
+          </div>
+        </Section>
+        {/* MENU SECTION */}
+        <Section title="Menu Section">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <Input
+                {...register("menu_section.title")}
+                placeholder="Our Menu"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
+              <Input
+                {...register("menu_section.description")}
+                placeholder="Tasty, fresh, and fast"
+              />
+            </div>
+          </div>
+        </Section>
+        {/* CONTACT + MAP */}
+        <Section title="Contact & Map">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <PhoneField
+                label="Phone"
+                {...register("phone")}
+                placeholder="8000000000"
+                formatOptions={{ whatsapp: false, call: true }}
+                showFormatButtons={false}
+              />
+            </div>
+            <div>
+              <PhoneField
+                label="WhatsApp"
+                type="whatsapp"
+                {...register("whatsapp")}
+                placeholder="8000000000"
+                formatOptions={{ whatsapp: true, call: false }}
+                showFormatButtons={false}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Address</label>
+            <Input {...register("address")} placeholder="123 Main Street" />
+          </div>
+          <div>
+            <Controller
+              name="google_maps_embed"
+              control={control}
+              render={({ field, fieldState }) => (
+                <GoogleMapsInput
+                  {...field}
+                  label="Google Maps Embed URL"
+                  instruction={
+                    <Link
+                      href="https://api.whatsapp.com/send/?phone=2348136289052&text=Hi+Pukkawit%21+I+would+like+my+business+to+appear+on+google+search+result.%20Kindly+assist+me+to+register+my+business+on+Google+Business+Profile.&type=phone_number&app_absent=0"
+                      target="_blank"
+                    >
+                      Register your Business on Google Business Profile
+                    </Link>
+                  }
+                  tooltip={{
+                    message: (
+                      <p>
+                        If you would like your business location to be on the
+                        map (if not yet) and appear on google search result,
+                        click{" "}
+                        <Link
+                          href="https://api.whatsapp.com/send/?phone=2348136289052&text=Hi+Pukkawit%21+I+would+like+my+business+to+appear+on+google+search+result.%20Kindly+assist+me+to+register+my+business+on+Google+Business+Profile.&type=phone_number&app_absent=0"
+                          target="_blank"
+                          className="underline text-primary uppercase font-semibold"
+                        >
+                          here
+                        </Link>{" "}
+                        to get started
+                      </p>
+                    ),
+                  }}
+                  error={fieldState.error?.message}
+                  placeholder="Enter your location, e.g. Itu Road, Uyo, Akwa Ibom State"
+                  className="w-full"
+                />
+              )}
+            />
+          </div>
+        </Section>
+        {/* ADDITIONAL JSON */}
+        <Section title="Additional (JSON)">
+          <Textarea
+            {...register("additional_json")}
+            rows={6}
+            placeholder='{"theme":"warm","social":{"instagram":"https://..."}}'
           />
-        </div>
-      </Section>
-
-      {/* ADDITIONAL JSON */}
-      <Section title="Additional (JSON)">
-        <Textarea
-          {...register("additional_json")}
-          rows={6}
-          placeholder='{"theme":"warm","social":{"instagram":"https://..."}}'
-        />
-      </Section>
-
-      <Button type="submit" disabled={upsert.isPending} className="w-full">
-        {upsert.isPending ? "Saving..." : "Save Restaurant Info"}
-      </Button>
-    </form>
+        </Section>
+        <Button type="submit" disabled={upsert.isPending} className="w-full">
+          {upsert.isPending ? "Saving..." : "Save Restaurant Info"}
+        </Button>
+      </form>
+    </div>
   );
 }

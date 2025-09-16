@@ -1,25 +1,37 @@
 import { supabase } from "./supabase/client";
+import { useParams } from "next/navigation";
+import { fetchTenantIdBySlug } from "./utils";
 
-export const fetchWhatappPhone = async (): Promise<string | null> => {
+export const fetchWhatsappPhone = async (
+  tenantSlug: string,
+): Promise<string | null> => {
+  const tenantId = await fetchTenantIdBySlug(tenantSlug);
+
   const { data, error } = await supabase
     .from("snack_bite_restaurant_info")
     .select("whatsapp")
+    .eq("tenant_id", tenantId)
     .single(); // ✅ ensures we only get one row
 
   if (error) {
     console.error("Error fetching WhatsApp number:", error);
     return null;
   }
-
   return data?.whatsapp || null;
 };
 
+export function useWhatsAppPhone(): Promise<string | null> {
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string | undefined;
+
+  return fetchWhatsappPhone(tenantSlug || "");
+}
+
 export async function generateWhatsAppURL(
+  whatsappPhone: string,
   message: string,
 ): Promise<string | null> {
   const encodedMessage = encodeURIComponent(message);
-
-  const whatsappPhone = await fetchWhatappPhone();
 
   if (!whatsappPhone) {
     console.error("No WhatsApp number found in DB");
@@ -34,6 +46,7 @@ export async function generateWhatsAppURL(
 
 export function createOrderMessage(
   items: { name: string; quantity: number; price: number }[],
+  tenantName: string,
 ): string {
   const orderDetails = items
     .map(
@@ -49,7 +62,7 @@ export function createOrderMessage(
     0,
   );
 
-  return `Hi! I'd like to place an order from SnackBite:
+  return `Hi! I'd like to place an order from ${tenantName}:
 
 ${orderDetails}
 

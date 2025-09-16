@@ -4,7 +4,7 @@ type RestaurantInfo = {
   hero_section?: {
     tagline: string;
     description: string;
-    imageUrls: string[];
+    imageUrls: ExistingFile[];
   };
   about_section: {
     title: string;
@@ -13,7 +13,7 @@ type RestaurantInfo = {
     paragraphs?: string[];
     established?: string;
     happy_customers?: string;
-    imageUrls?: string[];
+    imageUrls?: ExistingFile[];
   };
   menu_section?: {
     title?: string;

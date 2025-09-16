@@ -58,13 +58,6 @@ export async function fetchTenantSlugFromAuth(): Promise<string> {
   return tenant.slug;
 }
 
-/* export async function fetchTenantSlugFromAuth(): Promise<string> {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) throw new Error("User not found");
-
-  return data.user.user_metadata?.tenant_slug;
-} */
-
 export const getInitials = (name?: string | null) =>
   name
     ? name
@@ -82,3 +75,20 @@ export const normalizeRestaurantName = (name?: string | null) =>
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join("")
     : "SnackBite";
+
+export async function fetchRestaurantNameBySlug(
+  tenantSlug: string,
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("snack_bite_tenant_owners")
+    .select("restaurant_name")
+    .eq("slug", tenantSlug)
+    .single();
+
+  if (error || !data) {
+    console.error("Error fectching restaurant name: ", error);
+    return null;
+  }
+
+  return data.restaurant_name;
+}

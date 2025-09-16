@@ -123,8 +123,8 @@ export function HeroSection() {
     restaurantInfo?.hero_section?.imageUrls &&
     restaurantInfo.hero_section.imageUrls.length > 0
       ? restaurantInfo.hero_section.imageUrls.map(
-          (url: string, index: number) => ({
-            src: url,
+          (file: ExistingFile, index: number) => ({
+            src: file.url,
             alt: `hero-image-${index}` || "Hero image",
           })
         )

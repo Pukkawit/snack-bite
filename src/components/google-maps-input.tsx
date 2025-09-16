@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapPin, ExternalLink, Copy, Check, Asterisk } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,7 @@ export function GoogleMapsInput({
   const [address, setAddress] = useState("");
   const [embedHtml, setEmbedHtml] = useState(value);
   const [copied, setCopied] = useState(false);
+  const isInternalUpdate = useRef(false);
 
   const generateEmbedHtml = (location: string) => {
     if (!location.trim()) return "";
@@ -69,6 +70,8 @@ export function GoogleMapsInput({
 
     const newEmbedHtml = generateEmbedHtml(newAddress);
     setEmbedHtml(newEmbedHtml);
+
+    isInternalUpdate.current = true;
 
     // Call parent onChange with the iframe HTML
     if (onChange) {
@@ -98,10 +101,25 @@ export function GoogleMapsInput({
     }
   };
 
-  // Update internal state when value prop changes
   useEffect(() => {
-    setEmbedHtml(value);
-  }, [value]);
+    // Only update if this is not an internal update and value actually changed
+    if (!isInternalUpdate.current && value !== embedHtml) {
+      setEmbedHtml(value);
+      // Extract address from existing HTML if possible
+      if (value) {
+        const urlMatch = value.match(/q=([^&]*)/);
+        if (urlMatch) {
+          const extractedAddress = decodeURIComponent(urlMatch[1]);
+          setAddress(extractedAddress);
+        }
+      } else {
+        setAddress("");
+      }
+    }
+    // Reset the flag
+    isInternalUpdate.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]); // Removed embedHtml from dependency array to prevent infinite loop
 
   const extractUrlFromHtml = (html: string) => {
     const match = html.match(/src="([^"]*)"/);
@@ -123,8 +141,10 @@ export function GoogleMapsInput({
           {instruction && (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className="text-xs text-left text-info cursor-pointer hover:text-primary">
-                  {instruction}
+                <TooltipTrigger asChild>
+                  <span className="text-xs text-left text-info cursor-pointer hover:text-primary">
+                    {instruction}
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-sm text-xs bg-muted">
                   {tooltip?.message}

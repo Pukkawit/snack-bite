@@ -41,7 +41,9 @@ export function AboutSection() {
   const aboutSectionImages =
     restaurantInfo?.about_section?.imageUrls &&
     restaurantInfo?.about_section.imageUrls.length > 0
-      ? restaurantInfo.about_section.imageUrls
+      ? restaurantInfo.about_section.imageUrls.map(
+          (file: ExistingFile) => file.url
+        )
       : [];
 
   return (

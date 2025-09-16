@@ -30,26 +30,39 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  const userId = user.id;
-  console.log("✅ Verified user found", userId);
+  // Get tenant slug for this user
+  const { data: tenantOwner } = await supabase
+    .from("snack_bite_tenant_owners")
+    .select("slug")
+    .eq("user_id", user.id)
+    .single();
 
-  // Restrict /settings to only your account
+  const userTenantSlug = tenantOwner?.slug ?? null;
+
+  // Extract slug from URL path (e.g. /admin/<slug>)
+  const pathSegments = req.nextUrl.pathname.split("/");
+  const paramsSlug = pathSegments[2] ?? null;
+
+  if (!userTenantSlug || paramsSlug !== userTenantSlug) {
+    console.log("🚫 Unauthorized tenant slug → redirecting");
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
+  // Restrict /settings to only Boss
   if (req.nextUrl.pathname.startsWith("/settings")) {
-    const bossId = process.env.BOSS_SUPABASE_UID!;
-    if (userId !== bossId) {
-      console.log("🚫 Unauthorized → redirecting");
+    const bossId = process.env.NEXT_PUBLIC_DEFAULT_BOSS_SUPABASE_UID!;
+    if (user.id !== bossId) {
+      console.log("🚫 Unauthorized to settings → redirecting");
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
   }
 
-  return res;
+  return res; // ✅ always return res
 }
 
 export const config = {
   matcher: [
-    "/admin",
     "/admin/:path*",
-    "/settings",
     "/settings/:path*",
   ],
 };

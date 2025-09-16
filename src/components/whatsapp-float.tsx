@@ -3,16 +3,24 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { generateWhatsAppURL } from "@/lib/whatsapp";
+import { generateWhatsAppURL, useWhatsAppPhone } from "@/lib/whatsapp";
 import IconSets from "@/components/IconSets";
 import { X } from "lucide-react";
+import { useParams } from "next/navigation";
+import { fetchRestaurantNameBySlug } from "@/lib/utils";
 
 export function WhatsAppFloat() {
   const [isOpen, setIsOpen] = useState(false);
+  const whatsappPhone = useWhatsAppPhone();
+
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string;
 
   const handleWhatsAppClick = async () => {
-    const message = `Hi! I'd like to know more about your menu and place an order. Thank you!`;
-    const whatsappURL = await generateWhatsAppURL(message);
+    const tenantName = await fetchRestaurantNameBySlug(tenantSlug);
+    const number = (await whatsappPhone) ?? null;
+    const message = `Hi ${tenantName} 👋! I'd like to know more about your menu and place an order. Thank you!🥰`;
+    const whatsappURL = await generateWhatsAppURL(number || "", message);
     window.open(whatsappURL ?? "", "_blank");
     setIsOpen(false);
   };

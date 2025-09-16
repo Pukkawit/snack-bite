@@ -5,8 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartContext } from "@/providers/cart-provider";
-import { generateWhatsAppURL, createOrderMessage } from "@/lib/whatsapp";
+import {
+  generateWhatsAppURL,
+  createOrderMessage,
+  useWhatsAppPhone,
+} from "@/lib/whatsapp";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { fetchRestaurantNameBySlug } from "@/lib/utils";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -17,15 +23,25 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount } =
     useCartContext();
 
+  const whatsappPhone = useWhatsAppPhone();
+
+  const params = useParams();
+
+  const tenantSlug = params.tenantSlug as string;
+
   const handleWhatsAppOrder = async () => {
+    const number = (await whatsappPhone) ?? null;
     const orderItems = items.map((item) => ({
       name: item.name,
       quantity: item.quantity,
       price: item.price,
     }));
 
-    const message = createOrderMessage(orderItems);
-    const whatsappURL = await generateWhatsAppURL(message);
+    const restaurantName = await fetchRestaurantNameBySlug(tenantSlug);
+
+    const message = createOrderMessage(orderItems, restaurantName || "");
+
+    const whatsappURL = await generateWhatsAppURL(number || "", message);
     window.open(whatsappURL ?? "", "_blank");
     onClose();
   };

@@ -1,10 +1,11 @@
-// app/[tenantSlug]/opening-hours/OpeningHoursForm.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import OperationalHours, { OperationalHoursData } from "../OperationalHours";
+import OperationalHours, {
+  type OperationalHoursData,
+} from "../OperationalHours";
 import {
   useOpeningHours,
   useAddOpeningHour,
@@ -23,6 +24,35 @@ const dayNames = [
   "saturday",
 ];
 
+const deepEqual = (
+  obj1: OperationalHoursData,
+  obj2: OperationalHoursData
+): boolean => {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  for (const key of keys1) {
+    const val1 = obj1[key] || [];
+    const val2 = obj2[key] || [];
+
+    if (val1.length !== val2.length) return false;
+
+    for (let i = 0; i < val1.length; i++) {
+      if (
+        val1[i].id !== val2[i].id ||
+        val1[i].start !== val2[i].start ||
+        val1[i].end !== val2[i].end
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
 export default function OpeningHoursForm() {
   const params = useParams();
   const tenantSlug = params?.tenantSlug as string;
@@ -30,7 +60,7 @@ export default function OpeningHoursForm() {
   const [tenantId, setTenantId] = useState<string | null>(null);
   const [formValue, setFormValue] = useState<OperationalHoursData>({});
 
-  // resolve tenantId from slug
+  // tenantId from slug
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -70,8 +100,12 @@ export default function OpeningHoursForm() {
         mapped[day] = mapped[day]; // already ordered by query; keep line for clarity
       }
     });
-    setFormValue(mapped);
-  }, [openingHours]);
+
+    if (!deepEqual(mapped, formValue)) {
+      setFormValue(mapped);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openingHours]); // Removed formValue from dependencies to prevent infinite loop
 
   // Track original DB ids for diffing on save
   const originalIds = useMemo(

@@ -39,6 +39,7 @@ interface PhoneFieldProps
   showFormatButtons?: boolean;
   onWhatsAppClick?: (whatsappNumber: string) => void;
   onCallClick?: (callNumber: string) => void;
+  type?: "phone" | "whatsapp";
 }
 
 const formatPhoneNumber = (
@@ -116,6 +117,7 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
       showFormatButtons = true,
       onWhatsAppClick,
       onCallClick,
+      type = "phone",
       ...htmlInputProps
     },
     ref
@@ -264,15 +266,40 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
       setShowCountryCode(false);
       const cleanCountryCode = country.code.replace(/\D/g, "");
       const cleanLocal = localPhoneNumber.replace(/^0+/, "");
-      const newFullValue = "+" + cleanCountryCode + cleanLocal;
+      const newFullValue =
+        type === "whatsapp"
+          ? cleanCountryCode + cleanLocal
+          : "+" + cleanCountryCode + cleanLocal;
       console.log(
         `[PhoneField] Country selected: ${country.code}, New full value: ${newFullValue}`
       );
       if (onChange) {
         const syntheticEvent = {
-          target: { value: newFullValue, name: name || "" },
-          currentTarget: { value: newFullValue, name: name || "" },
+          target: {
+            value: newFullValue,
+            name: name || "",
+            type: "tel",
+          },
+          currentTarget: {
+            value: newFullValue,
+            name: name || "",
+            type: "tel",
+          },
+          type: "change",
+          preventDefault: () => {},
+          stopPropagation: () => {},
+          persist: () => {},
+          bubbles: true,
+          cancelable: true,
+          defaultPrevented: false,
+          eventPhase: 3,
+          isTrusted: true,
+          timeStamp: Date.now(),
         } as React.ChangeEvent<HTMLInputElement>;
+
+        console.log(
+          `[PhoneField] Calling onChange with country change value: ${syntheticEvent.target.value}`
+        );
         onChange(syntheticEvent);
       }
     };
@@ -291,14 +318,31 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
       setLocalPhoneNumber(val);
 
       const cleanCountryCode = selectedCode.code.replace(/\D/g, "");
-      const newFullValue = "+" + cleanCountryCode + val;
+      const newFullValue =
+        type === "whatsapp"
+          ? cleanCountryCode + val
+          : "+" + cleanCountryCode + val;
       console.log(`[PhoneField] New full value to propagate: ${newFullValue}`);
 
       if (onChange) {
+        const originalTarget = e.target;
         const syntheticEvent = {
           ...e,
-          target: { ...e.target, value: newFullValue },
-        };
+          target: {
+            ...originalTarget,
+            value: newFullValue,
+            name: name || "",
+          },
+          currentTarget: {
+            ...e.currentTarget,
+            value: newFullValue,
+            name: name || "",
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        console.log(
+          `[PhoneField] Calling onChange with synthetic event value: ${syntheticEvent.target.value}`
+        );
         onChange(syntheticEvent);
       }
     };
@@ -344,7 +388,7 @@ const PhoneField = React.forwardRef<HTMLInputElement, PhoneFieldProps>(
                 "bg-secondary text-secondary-foreground border-input"
               )}
             >
-              <div className="px-2  flex items-center gap-1 whitespace-nowrap">
+              <div className="px-2 flex items-center gap-1 whitespace-nowrap">
                 <div className="w-6 h-4 relative overflow-hidden rounded-xs">
                   <Image
                     src={`https://flagcdn.com/w40/${selectedCode.iso.toLowerCase()}.png`}

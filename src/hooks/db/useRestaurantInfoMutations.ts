@@ -19,13 +19,13 @@ export function useRestaurantInfoMutations(tenantSlug: string) {
         tenant_id: tenantId,
         hero_section: {
           ...values.hero_section,
-          imageUrls: values.hero_section.imageUrls.map((f) => f.url),
+          imageUrls: values.hero_section.imageUrls,
         },
         about_section: values.about_section
           ? {
             ...values.about_section,
             paragraphs: values.about_section.paragraphs?.filter(Boolean),
-            imageUrls: values.about_section.imageUrls?.map((f) => f.url),
+            imageUrls: values.about_section.imageUrls,
           }
           : null,
         menu_section: values.menu_section ?? null,
