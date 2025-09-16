@@ -79,10 +79,12 @@ export const normalizeRestaurantName = (name?: string | null) =>
 export async function fetchRestaurantNameBySlug(
   tenantSlug: string,
 ): Promise<string | null> {
+  const tenantId = await fetchTenantIdBySlug(tenantSlug);
+
   const { data, error } = await supabase
-    .from("snack_bite_tenant_owners")
+    .from("snack_bite_restaurant_info")
     .select("restaurant_name")
-    .eq("slug", tenantSlug)
+    .eq("tenant_id", tenantId)
     .single();
 
   if (error || !data) {

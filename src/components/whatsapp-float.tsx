@@ -17,7 +17,7 @@ export function WhatsAppFloat() {
   const tenantSlug = params.tenantSlug as string;
 
   const handleWhatsAppClick = async () => {
-    const tenantName = await fetchRestaurantNameBySlug(tenantSlug);
+    const tenantName = (await fetchRestaurantNameBySlug(tenantSlug)) || "";
     const number = (await whatsappPhone) ?? null;
     const message = `Hi ${tenantName} 👋! I'd like to know more about your menu and place an order. Thank you!🥰`;
     const whatsappURL = await generateWhatsAppURL(number || "", message);
