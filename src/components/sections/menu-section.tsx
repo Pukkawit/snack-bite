@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useMenuSectionItems } from "@/hooks/db/useMenuSectionItems";
+import { MenuItem } from "@/types/menu";
 
 const categories = [
   { id: "all", name: "All Items" },
