@@ -1,5 +1,6 @@
 "use client";
 
+import { MenuItem } from "@/types/menu";
 import { useCallback, useState } from "react";
 export interface CartItem extends MenuItem {
   quantity: number;

@@ -94,7 +94,7 @@ export default function AdminDashboard({
 
         <div
           onClick={() => {
-            router.push("");
+            router.push(`/admin/${tenantSlug}/promo-banner-form`);
           }}
           className="border-border cursor-pointer bg-yellow-500 dark:yellow-300 transition-colors duration-300 hover:bg-yellow-400 dark:hover-bg-yellow-400 rounded-md p-6 h-32 w-32 flex items-center justify-center"
         >

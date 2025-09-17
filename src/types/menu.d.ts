@@ -1,5 +1,4 @@
-// types/menu.ts
-export interface MenuItem {
+type MenuItem = {
   id: string;
   tenant_id: string;
   name: string;
@@ -12,7 +11,7 @@ export interface MenuItem {
   created_at: string;
   updated_at?: string;
   optimistic?: boolean; // for temporary optimistic state
-}
+};
 
 export type NewMenuItem = Omit<MenuItem, "id" | "created_at" | "updated_at">;
 export type UpdateMenuItem =

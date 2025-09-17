@@ -14,13 +14,20 @@ import {
   Bell,
   CreditCard,
   Globe,
+  Settings2,
 } from "lucide-react";
 
 const sidebarItems = [
   {
-    title: "General Settings",
-    href: `/admin/${process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG}/settings`,
+    title: "Basic Settings",
+    href: `/admin/${process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG}`,
     icon: Settings,
+    color: "text-violet-500",
+  },
+  {
+    title: "Settings Box",
+    href: `/admin/${process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG}/settings`,
+    icon: Settings2,
     color: "text-blue-500",
   },
   {

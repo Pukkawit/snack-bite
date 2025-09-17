@@ -7,34 +7,11 @@ import { getDynamicIcon } from "@/lib/dynamic-promo/dynamic-icons";
 import {
   ActionConfig,
   handleAction,
-  type ActionType,
 } from "@/lib/dynamic-promo/action-handlers";
 import { useWhatsAppPhone } from "@/lib/whatsapp";
 
-interface PromoData {
-  title: string;
-  description: string;
-  actionButtonText: string;
-  actionButtonIcon?: string;
-  buttonAction: {
-    type: ActionType;
-    value: string;
-    metadata?: {
-      message?: string;
-      businessName?: string;
-      subject?: string;
-      body?: string;
-      openInNewTab?: boolean;
-      behavior?: "smooth" | "instant";
-      block?: "start" | "center" | "end";
-      displayText?: string;
-      filename?: string;
-    };
-  };
-}
-
 interface PromoBannerDynamicProps {
-  promos: PromoData[];
+  promos: Promo[];
   decorativeIcons?: string[];
   floatingIcons?: string[];
   reappearInterval?: number;

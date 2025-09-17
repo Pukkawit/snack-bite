@@ -1,13 +1,5 @@
 import { generateWhatsAppURL } from "../whatsapp";
 
-export type ActionType =
-  | "whatsapp"
-  | "email"
-  | "link"
-  | "scroll"
-  | "phone"
-  | "download";
-
 export interface ActionConfig {
   type: ActionType;
   data: {

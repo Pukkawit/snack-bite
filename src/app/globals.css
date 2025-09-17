@@ -19,10 +19,10 @@
   --font-weight-bold: 700;
 
   /* Border Radius */
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-xs: calc(var(--radius) - 6px);
+  --rounded-lg: var(--radius);
+  --rounded-md: calc(var(--radius) - 2px);
+  --rounded-sm: calc(var(--radius) - 4px);
+  --rounded-xs: calc(var(--radius) - 6px);
 
   /* z-index Scale */
   --z-index-60: 60;

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, ReactNode } from "react";
 import { useCart, CartItem } from "@/hooks/use-cart";
+import { MenuItem } from "@/types/menu";
 
 interface CartContextType {
   items: CartItem[];

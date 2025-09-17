@@ -3,45 +3,35 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight, Gift, Zap } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { fetchTenantIdBySlug } from "@/lib/utils";
+import { usePromoBanners } from "@/hooks/db/usePromoBanners";
+import { generateWhatsAppURL, useWhatsAppPhone } from "@/lib/whatsapp";
+import { fetchRestaurantNameBySlug } from "@/lib/utils";
 import { useParams } from "next/navigation";
 
 export function PromoBanner() {
-  const [banners, setBanners] = useState<PromoBanner[]>([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
   const params = useParams();
-  const tenantSlug = params.tenantSlug as string | undefined;
-
+  const tenantSlug = params.tenantSlug as string;
   /* const tenantId = async () => {
     const tenantId = await fetchTenantIdBySlug(tenantSlug || "");
     return tenantId;
   }; */
 
-  useEffect(() => {
-    const fetchPromoBanners = async () => {
-      const tenantId = await fetchTenantIdBySlug(tenantSlug || "");
+  const whatsappPhone = useWhatsAppPhone();
 
-      const { data, error } = await supabase
-        .from("snack_bite_promo_banners")
-        .select("*")
-        .eq("tenant_id", tenantId)
-        .eq("active", true)
-        .or("expires_at.is.null,expires_at.gt.now()");
+  const { activeBanners } = usePromoBanners();
+  const { data: banners = [] } = activeBanners;
 
-      if (error) {
-        console.error("Error fetching promo banners:", error);
-        return;
-      }
-
-      setBanners(data || []);
-    };
-
-    fetchPromoBanners();
-  }, [tenantSlug]);
+  const handleLearnMoreClick = async () => {
+    const tenantName = (await fetchRestaurantNameBySlug(tenantSlug)) || "";
+    const number = (await whatsappPhone) ?? null;
+    const message = `Hi ${tenantName} 👋! I'd like to know more about ${banners[currentBanner].title} and participate in the promo. Thank you!🥰`;
+    const whatsappURL = await generateWhatsAppURL(number || "", message);
+    window.open(whatsappURL ?? "", "_blank");
+  };
 
   useEffect(() => {
     if (banners.length > 1) {
@@ -84,7 +74,7 @@ export function PromoBanner() {
           damping: 30,
           duration: 0.6,
         }}
-        className="fixed top-16 left-0 right-0 z-40 shadow-lg"
+        className=" shadow-lg"
       >
         <div
           className="relative overflow-hidden backdrop-blur-sm"
@@ -164,6 +154,7 @@ export function PromoBanner() {
                   <Button
                     size="sm"
                     className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                    onClick={handleLearnMoreClick}
                     style={{
                       color: banner.text_color,
                       borderColor: `${banner.text_color}40`,
@@ -219,6 +210,7 @@ export function PromoBanner() {
               <Button
                 size="sm"
                 className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                onClick={() => {}}
                 style={{
                   color: banner.text_color,
                   borderColor: `${banner.text_color}40`,
